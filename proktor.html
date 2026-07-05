@@ -472,9 +472,14 @@
   // ==========================================================
   const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzavUXVeEDNf_65an-rb37OEzV03nF_MtzrzBe1sVBFL3lpFR6UxbhpHFoU7d9cT_TSuw/exec';
 
-  // GANTI dengan email akun Google yang dipakai untuk Deploy Code.gs
-  const EMAIL_SISTEM = 'smplpmmano@gmail.com';
-  document.getElementById('emailSistem').textContent = EMAIL_SISTEM;
+  // Email sistem sekarang diambil otomatis dari Pengaturan Sistem (dikelola Admin)
+  let EMAIL_SISTEM = 'memuat...';
+  callGAS('getEmailSistem', {}).then(res => {
+    if (res.success) {
+      EMAIL_SISTEM = res.email;
+      document.getElementById('emailSistem').textContent = EMAIL_SISTEM;
+    }
+  });
 
   let dataProktorAktif = null;
 
