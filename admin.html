@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ALINEA — Admin</title>
+<title>ALINEA — Admin Pusat</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -18,149 +18,260 @@
   }
   *{box-sizing:border-box;}
   body{margin:0; background:var(--paper); color:var(--ink); font-family:'IBM Plex Sans',sans-serif; -webkit-font-smoothing:antialiased;}
-  .shell{display:grid; grid-template-columns:250px 1fr; min-height:100vh;}
 
-  .sidebar{background:var(--ink); color:#D8D8D8; padding:26px 20px; display:flex; flex-direction:column;}
-  .brand{display:flex; align-items:center; gap:10px; margin-bottom:34px; padding:0 4px;}
-  .mark{width:34px; height:34px; border-radius:11px 11px 11px 3px; background:var(--gold); color:var(--ink); display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-style:italic; font-weight:600; font-size:19px; flex-shrink:0;}
+  .login-screen{min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;}
+  .login-card{background:var(--paper-raised); border:1px solid var(--line); border-radius:28px 28px 28px 6px; box-shadow:var(--shadow); padding:38px 34px; width:100%; max-width:400px;}
+  .login-mark{width:44px; height:44px; border-radius:14px 14px 14px 4px; background:var(--ink); color:var(--gold); display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-style:italic; font-weight:600; font-size:24px; margin-bottom:18px;}
+  .login-card h1{font-family:'Fraunces',serif; font-size:23px; font-weight:700; margin:0 0 6px;}
+  .login-card p{font-size:13.5px; color:var(--ink-soft); margin:0 0 24px; line-height:1.5;}
+  .field{margin-bottom:14px;}
+  .field label{display:block; font-size:12.5px; font-weight:700; margin-bottom:6px; color:var(--ink-soft);}
+  .field input, .field select{width:100%; padding:12px 14px; border-radius:12px; border:1.5px solid var(--line); font-family:inherit; font-size:15px; background:var(--paper);}
+  .btn{border:none; cursor:pointer; font-family:inherit; font-weight:700; font-size:14px; padding:13px 20px; border-radius:100px 100px 100px 4px;}
+  .btn-primary{background:var(--blue); color:#fff; width:100%;}
+  .btn-primary:disabled{opacity:0.6; cursor:wait;}
+  .btn-outline{background:transparent; border:1.5px solid var(--line); color:var(--ink-soft);}
+  .msg{font-size:12.5px; margin-top:14px; padding:10px 12px; border-radius:10px; display:none;}
+  .msg.error{background:var(--danger-tint); color:var(--danger); display:block;}
+  .msg.success{background:var(--success-tint); color:var(--success); display:block;}
+
+  .app{display:none;}
+  .shell{display:grid; grid-template-columns:250px 1fr; min-height:100vh;}
+  .sidebar{background:var(--ink); color:#D8D8D8; padding:26px 20px; display:flex; flex-direction:column; position:sticky; top:0; height:100vh; overflow-y:auto;}
+  .brand{display:flex; align-items:center; gap:10px; margin-bottom:28px; padding:0 4px;}
+  .mark{width:32px; height:32px; border-radius:11px 11px 11px 3px; background:var(--gold); color:var(--ink); display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-style:italic; font-weight:600; font-size:19px; flex-shrink:0;}
   .brand-name{font-family:'Fraunces',serif; font-weight:700; font-size:17px; color:#fff;}
   .brand-sub{font-size:10px; color:#8A8A8A; font-family:'IBM Plex Mono',monospace; text-transform:uppercase; letter-spacing:0.4px;}
-  nav{display:flex; flex-direction:column; gap:3px; margin-top:6px;}
-  .nav-label{font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color:#6B6B6B; font-family:'IBM Plex Mono',monospace; margin:16px 10px 8px;}
-  nav a{display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px 10px 10px 3px; color:#C4C4C4; text-decoration:none; font-size:14px; font-weight:500;}
-  nav a.active{background:var(--gold); color:var(--ink); font-weight:700;}
-  nav a:hover:not(.active){background:rgba(255,255,255,0.06);}
-  .sidebar-foot{margin-top:auto; padding-top:20px; border-top:1px solid rgba(255,255,255,0.1); display:flex; align-items:center; gap:10px;}
-  .avatar{width:34px; height:34px; border-radius:50%; background:var(--blue); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; flex-shrink:0;}
-  .who{font-size:13px; color:#fff; font-weight:600; line-height:1.3;}
-  .who span{display:block; font-weight:400; font-size:11px; color:#8A8A8A;}
+  nav.sidenav{display:flex; flex-direction:column; gap:3px;}
+  nav.sidenav button{display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px 10px 10px 3px; color:#C4C4C4; background:none; border:none; text-align:left; font-size:13.5px; font-weight:600; cursor:pointer; font-family:inherit; width:100%;}
+  nav.sidenav button.active{background:var(--gold); color:var(--ink); font-weight:700;}
+  nav.sidenav button:hover:not(.active){background:rgba(255,255,255,0.06);}
+  .sidebar-foot{margin-top:auto; padding-top:20px; border-top:1px solid rgba(255,255,255,0.1);}
+  .logout{font-size:12.5px; color:#8A8A8A; text-decoration:none; cursor:pointer; background:none; border:none; font-family:inherit; padding:0;}
 
-  main{padding:32px 40px 60px;}
-  .topbar{display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:28px;}
-  .topbar h1{font-family:'Fraunces',serif; font-size:28px; font-weight:700; margin:0 0 4px;}
-  .topbar p{margin:0; color:var(--ink-soft); font-size:14px;}
-  .btn{border:none; cursor:pointer; font-family:inherit; font-weight:700; font-size:14px; padding:12px 20px; border-radius:100px 100px 100px 4px; display:inline-flex; align-items:center; gap:8px;}
-  .btn-primary{background:var(--blue); color:#fff;}
-  .btn-primary:hover{background:var(--blue-deep);}
-  .btn-primary:disabled{opacity:0.6; cursor:wait;}
+  main.content{padding:32px 40px 60px; max-width:920px;}
+  .section{display:none;}
+  .section.active{display:block;}
+  .page-title{font-family:'Fraunces',serif; font-size:26px; font-weight:700; margin:0 0 4px;}
+  .page-sub{color:var(--ink-soft); font-size:14px; margin:0 0 24px;}
 
-  .stats{display:grid; grid-template-columns:1.2fr 1fr 1fr; gap:16px; margin-bottom:32px;}
+  .stats{display:grid; grid-template-columns:1.2fr 1fr 1fr; gap:16px; margin-bottom:28px;}
   .stat-card{border-radius:22px; padding:22px; box-shadow:var(--shadow); position:relative; overflow:hidden;}
   .stat-card.blue{background:var(--blue); color:#fff; border-radius:24px 24px 24px 4px;}
   .stat-card.gold{background:var(--gold); color:var(--ink); border-radius:24px 4px 24px 24px;}
   .stat-card.line{background:var(--paper-raised); border:1.5px solid var(--line); color:var(--ink); border-radius:4px 24px 24px 24px;}
   .stat-label{font-size:12px; font-family:'IBM Plex Mono',monospace; text-transform:uppercase; letter-spacing:0.3px; margin-bottom:10px; opacity:0.85;}
   .stat-value{font-family:'Fraunces',serif; font-size:34px; font-weight:700;}
-  .stat-delta{font-size:12px; margin-top:6px; opacity:0.8;}
   .stat-dot{position:absolute; width:70px; height:70px; border-radius:50%; background:rgba(255,255,255,0.15); bottom:-24px; right:-24px;}
   .stat-card.line .stat-dot{background:var(--blue-tint);}
 
-  .card{background:var(--paper-raised); border:1px solid var(--line); border-radius:22px; box-shadow:var(--shadow); overflow:hidden;}
+  .card{background:var(--paper-raised); border:1px solid var(--line); border-radius:22px; box-shadow:var(--shadow); overflow:hidden; margin-bottom:22px;}
+  .card-body{padding:22px 24px;}
   .card-head{padding:20px 24px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center;}
   .card-head h2{font-family:'Fraunces',serif; font-size:18px; margin:0; font-weight:700;}
   .search{font-size:13px; padding:9px 16px; border-radius:100px; border:1.5px solid var(--line); color:var(--ink); background:var(--paper); font-family:inherit; width:200px;}
   table{width:100%; border-collapse:collapse;}
   th{text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.4px; color:var(--ink-faint); font-family:'IBM Plex Mono',monospace; padding:12px 24px; border-bottom:1px solid var(--line); font-weight:500;}
-  td{padding:16px 24px; border-bottom:1px solid var(--line); font-size:14px; vertical-align:middle;}
+  td{padding:14px 24px; border-bottom:1px solid var(--line); font-size:13.5px; vertical-align:middle;}
   tr:last-child td{border-bottom:none;}
-  .kode{font-family:'IBM Plex Mono',monospace; background:var(--blue-tint); color:var(--blue-deep); padding:4px 10px; border-radius:8px 8px 8px 2px; font-size:12.5px; letter-spacing:0.3px; font-weight:600;}
+  .kode{font-family:'IBM Plex Mono',monospace; background:var(--blue-tint); color:var(--blue-deep); padding:4px 10px; border-radius:8px 8px 8px 2px; font-size:12px; letter-spacing:0.3px; font-weight:600;}
   .sekolah{font-weight:700;}
   .sekolah span{display:block; font-weight:400; font-size:12px; color:var(--ink-faint); margin-top:2px;}
-  .badge{display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700; padding:5px 11px; border-radius:100px 100px 100px 3px;}
+  .badge{display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:700; padding:5px 11px; border-radius:100px 100px 100px 3px;}
   .badge.aktif{background:var(--success-tint); color:var(--success);}
-  .badge.nonaktif, .badge.belum{background:var(--danger-tint); color:var(--danger);}
+  .badge.nonaktif{background:var(--danger-tint); color:var(--danger);}
   .badge .dot{width:6px; height:6px; border-radius:50%; background:currentColor;}
-  .jenjang-pill{font-size:11.5px; font-family:'IBM Plex Mono',monospace; padding:3px 9px; border-radius:8px; background:var(--gold-tint); color:var(--gold-deep); font-weight:600;}
+  .jenjang-pill{font-size:11px; font-family:'IBM Plex Mono',monospace; padding:3px 9px; border-radius:8px; background:var(--gold-tint); color:var(--gold-deep); font-weight:600;}
   .link{color:var(--blue); font-size:13px; font-weight:700; text-decoration:none; cursor:pointer; background:none; border:none; font-family:inherit; padding:0;}
   .link.danger{color:var(--danger);}
   .actions{display:flex; gap:14px;}
-  .empty-row td{text-align:center; color:var(--ink-faint); padding:40px 24px; font-size:13.5px;}
+  .empty-row td{text-align:center; color:var(--ink-faint); padding:36px 24px; font-size:13.5px;}
+
+  .desc{font-size:13.5px; color:var(--ink-soft); line-height:1.6; margin:0 0 18px;}
+  .row3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;}
+  .tabs{display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap;}
+  .tab-btn{border:1.5px solid var(--line); background:var(--paper); color:var(--ink-soft); font-family:inherit; font-weight:700; font-size:13px; padding:9px 16px; border-radius:100px 100px 100px 4px; cursor:pointer;}
+  .tab-btn.active{background:var(--ink); color:var(--gold); border-color:var(--ink);}
+  textarea{width:100%; padding:12px 14px; border-radius:12px; border:1.5px solid var(--line); font-family:'IBM Plex Sans',sans-serif; font-size:13.5px; background:var(--paper); resize:vertical;}
 
   .overlay{position:fixed; inset:0; background:rgba(26,26,26,0.5); display:none; align-items:center; justify-content:center; z-index:10;}
   .overlay.show{display:flex;}
   .modal{background:var(--paper-raised); border-radius:26px 26px 26px 6px; padding:30px; width:420px; box-shadow:0 30px 60px -20px rgba(0,0,0,0.35);}
   .modal h3{font-family:'Fraunces',serif; margin:0 0 6px; font-size:20px; font-weight:700;}
   .modal p.sub{margin:0 0 22px; font-size:13px; color:var(--ink-faint);}
-  .field{margin-bottom:14px;}
-  .field label{display:block; font-size:12.5px; font-weight:700; margin-bottom:6px; color:var(--ink-soft);}
-  .field input, .field select{width:100%; padding:10px 12px; border-radius:10px; border:1.5px solid var(--line); font-family:inherit; font-size:14px; background:var(--paper);}
   .modal-actions{display:flex; justify-content:flex-end; gap:10px; margin-top:20px;}
   .btn-ghost{background:transparent; border:1.5px solid var(--line); color:var(--ink-soft); padding:10px 16px; border-radius:100px; font-weight:700; font-size:13px; cursor:pointer; font-family:inherit;}
-  .field-msg{font-size:12.5px; margin-top:10px; padding:10px 12px; border-radius:10px; display:none;}
-  .field-msg.error{background:var(--danger-tint); color:var(--danger); display:block;}
-  .field-msg.success{background:var(--success-tint); color:var(--success); display:block;}
   .kode-hasil{font-family:'IBM Plex Mono',monospace; font-size:20px; font-weight:700; color:var(--blue-deep); background:var(--blue-tint); padding:10px 16px; border-radius:10px; text-align:center; margin-top:14px; letter-spacing:1px;}
+  .btn-hapus{background:none; border:none; color:var(--danger); cursor:pointer; font-size:16px; padding:2px 6px;}
 </style>
 </head>
 <body>
-<div class="shell">
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="mark">¶</div>
-      <div>
-        <div class="brand-name">ALINEA</div>
-        <div class="brand-sub">Admin</div>
-      </div>
-    </div>
-    <nav>
-      <div class="nav-label">Utama</div>
-      <a href="#" class="active">◧ Ringkasan</a>
-      <a href="#">🏫 Proktor &amp; Sekolah</a>
-      <div class="nav-label">Sistem</div>
-      <a href="#">▤ Bank Soal Master</a>
-      <a href="#">⚙ Pengaturan</a>
-    </nav>
-    <div class="sidebar-foot">
-      <div class="avatar">DA</div>
-      <div class="who">Dirgam Ode Adulama<span>Super Admin</span></div>
-    </div>
-  </aside>
 
-  <main>
-    <div class="topbar">
-      <div>
-        <h1>Ringkasan Sistem</h1>
-        <p id="tanggalHariIni"></p>
-      </div>
-      <button class="btn btn-primary" onclick="bukaModalKode()">+ Buat Kode Proktor</button>
-    </div>
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="login-mark">¶</div>
+    <h1>Masuk Admin</h1>
+    <p>Halaman ini khusus untuk Admin Pusat ALINEA. Masukkan kata sandi untuk melanjutkan.</p>
+    <div class="field"><label>Kata Sandi</label><input type="password" id="inpPassword" placeholder="••••••••"></div>
+    <button class="btn btn-primary" id="btnLogin" onclick="submitLogin()">Masuk</button>
+    <div class="msg" id="loginMsg"></div>
+  </div>
+</div>
 
-    <div class="stats">
-      <div class="stat-card blue">
-        <div class="stat-label">Sekolah Terdaftar</div>
-        <div class="stat-value" id="statSekolah">—</div>
-        <div class="stat-delta">Semua kode aktif maupun belum setup</div>
-        <div class="stat-dot"></div>
+<div class="app" id="appScreen">
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="mark">¶</div>
+        <div>
+          <div class="brand-name">ALINEA</div>
+          <div class="brand-sub">Admin Pusat</div>
+        </div>
       </div>
-      <div class="stat-card gold">
-        <div class="stat-label">Sheet Terhubung</div>
-        <div class="stat-value" id="statTerhubung">—</div>
-        <div class="stat-delta">Sudah selesai proses setup</div>
-        <div class="stat-dot"></div>
+      <nav class="sidenav">
+        <button class="active" data-section="ringkasan" onclick="pindahSection('ringkasan')">◧ Ringkasan</button>
+        <button data-section="proktor" onclick="pindahSection('proktor')">🏫 Proktor &amp; Sekolah</button>
+        <button data-section="bankmaster" onclick="pindahSection('bankmaster')">▤ Bank Soal Master</button>
+        <button data-section="pengaturan" onclick="pindahSection('pengaturan')">⚙ Pengaturan</button>
+      </nav>
+      <div class="sidebar-foot">
+        <button class="logout" onclick="logout()">← Keluar</button>
       </div>
-      <div class="stat-card line">
-        <div class="stat-label">Belum Setup</div>
-        <div class="stat-value" id="statBelum">—</div>
-        <div class="stat-delta" style="color:var(--blue-deep);">Menunggu proktor daftarkan Sheet</div>
-        <div class="stat-dot"></div>
-      </div>
-    </div>
+    </aside>
 
-    <div class="card">
-      <div class="card-head">
-        <h2>Daftar Proktor</h2>
-        <input class="search" id="searchInput" placeholder="Cari sekolah..." oninput="renderTabel()">
-      </div>
-      <table>
-        <thead>
-          <tr><th>Kode</th><th>Sekolah</th><th>Jenjang</th><th>Status</th><th>Aksi</th></tr>
-        </thead>
-        <tbody id="tabelProktor">
-          <tr class="empty-row"><td colspan="5">Memuat data...</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </main>
+    <main class="content">
+
+      <section class="section active" id="section-ringkasan">
+        <h1 class="page-title">Ringkasan Sistem</h1>
+        <p class="page-sub" id="tanggalHariIni"></p>
+
+        <div class="stats">
+          <div class="stat-card blue">
+            <div class="stat-label">Sekolah Terdaftar</div>
+            <div class="stat-value" id="statSekolah">—</div>
+            <div class="stat-dot"></div>
+          </div>
+          <div class="stat-card gold">
+            <div class="stat-label">Sheet Terhubung</div>
+            <div class="stat-value" id="statTerhubung">—</div>
+            <div class="stat-dot"></div>
+          </div>
+          <div class="stat-card line">
+            <div class="stat-label">Belum Setup</div>
+            <div class="stat-value" id="statBelum">—</div>
+            <div class="stat-dot"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h2>Sekolah Terbaru</h2></div>
+          <div class="card-body" style="padding:0;">
+            <table>
+              <thead><tr><th>Kode</th><th>Sekolah</th><th>Status</th></tr></thead>
+              <tbody id="tabelRingkas"><tr class="empty-row"><td colspan="3">Memuat data...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="section-proktor">
+        <h1 class="page-title">Proktor &amp; Sekolah</h1>
+        <p class="page-sub">Kelola kode akses semua sekolah yang menggunakan ALINEA.</p>
+
+        <button class="btn btn-primary" style="width:auto; margin-bottom:20px;" onclick="bukaModalKode()">+ Buat Kode Proktor</button>
+
+        <div class="card">
+          <div class="card-head">
+            <h2>Daftar Proktor</h2>
+            <input class="search" id="searchInput" placeholder="Cari sekolah..." oninput="renderTabel()">
+          </div>
+          <table>
+            <thead><tr><th>Kode</th><th>Sekolah</th><th>Jenjang</th><th>Status</th><th>Aksi</th></tr></thead>
+            <tbody id="tabelProktor"><tr class="empty-row"><td colspan="5">Memuat data...</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="section-bankmaster">
+        <h1 class="page-title">Bank Soal Master</h1>
+        <p class="page-sub">Soal di sini jadi starter set yang dipakai semua sekolah lewat tombol "Isi Starter Set AKM" di Menu Proktor.</p>
+
+        <div class="card">
+          <div class="card-body">
+            <div class="tabs">
+              <button class="tab-btn active" data-jenjang="SMP" onclick="gantiJenjangMaster('SMP')">SMP</button>
+              <button class="tab-btn" data-jenjang="SMA" onclick="gantiJenjangMaster('SMA')">SMA</button>
+              <button class="tab-btn" data-jenjang="Gaya" onclick="gantiJenjangMaster('Gaya')">Gaya Belajar</button>
+            </div>
+
+            <div id="formMasterLN">
+              <div class="field"><label>Kategori</label>
+                <select id="mKategori"><option value="Literasi">Literasi</option><option value="Numerasi">Numerasi</option></select>
+              </div>
+              <div class="field"><label>Pertanyaan</label><textarea id="mPertanyaan" rows="2"></textarea></div>
+              <div class="field"><label>Petikan / Teks Bacaan (opsional)</label><textarea id="mPetikan" rows="2"></textarea></div>
+              <div class="row3">
+                <div class="field"><label>Pilihan A</label><input id="mA"></div>
+                <div class="field"><label>Pilihan B</label><input id="mB"></div>
+                <div class="field"><label>Pilihan C</label><input id="mC"></div>
+              </div>
+              <div class="row3">
+                <div class="field"><label>Pilihan D</label><input id="mD"></div>
+                <div class="field"><label>Kunci Jawaban</label><select id="mKunci"><option>A</option><option>B</option><option>C</option><option>D</option></select></div>
+                <div class="field"><label>Level</label><select id="mLevel"><option>Mudah</option><option selected>Sedang</option><option>Sulit</option></select></div>
+              </div>
+              <button class="btn btn-primary" style="width:auto;" onclick="submitTambahMaster()">Tambah ke Master</button>
+              <div class="msg" id="masterMsg"></div>
+            </div>
+
+            <div id="formMasterGaya" style="display:none;">
+              <div class="field"><label>Pernyataan</label><textarea id="mgPernyataan" rows="2"></textarea></div>
+              <div class="field"><label>Tipe Gaya Belajar</label>
+                <select id="mgTipe"><option>Visual</option><option>Auditori</option><option>Kinestetik</option></select>
+              </div>
+              <button class="btn btn-primary" style="width:auto;" onclick="submitTambahMasterGaya()">Tambah ke Master</button>
+              <div class="msg" id="masterGayaMsg"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h2 id="judulTabelMaster">Daftar Soal Master — SMP</h2></div>
+          <table>
+            <thead id="theadMaster"><tr><th>ID</th><th>Kategori</th><th>Pertanyaan</th><th>Kunci</th><th>Level</th><th></th></tr></thead>
+            <tbody id="bodyMaster"><tr class="empty-row"><td colspan="6">Memuat data...</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="section-pengaturan">
+        <h1 class="page-title">Pengaturan Sistem</h1>
+        <p class="page-sub">Pengaturan ini berlaku untuk seluruh sistem ALINEA.</p>
+
+        <div class="card">
+          <div class="card-body">
+            <h2 style="font-family:'Fraunces',serif; font-size:16px; margin:0 0 4px;">Email untuk Sharing Sheet</h2>
+            <p class="desc">Email ini yang ditampilkan ke proktor supaya mereka tahu ke mana harus share Google Sheet mereka.</p>
+            <div class="field"><input id="pEmailSistem" placeholder="akun-sistem@gmail.com"></div>
+            <button class="btn btn-primary" style="width:auto;" onclick="submitEmailSistem()">Simpan Email</button>
+            <div class="msg" id="emailMsg"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-body">
+            <h2 style="font-family:'Fraunces',serif; font-size:16px; margin:0 0 4px;">Ubah Kata Sandi Admin</h2>
+            <p class="desc">Kata sandi ini dipakai untuk masuk ke halaman Admin ini.</p>
+            <div class="field"><label>Kata Sandi Baru</label><input type="password" id="pPasswordBaru" placeholder="Minimal 6 karakter"></div>
+            <div class="field"><label>Ulangi Kata Sandi Baru</label><input type="password" id="pPasswordUlang" placeholder="Ketik ulang"></div>
+            <button class="btn btn-primary" style="width:auto;" onclick="submitPasswordBaru()">Ubah Kata Sandi</button>
+            <div class="msg" id="passwordMsg"></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
 </div>
 
 <div class="overlay" id="modalKode">
@@ -173,36 +284,26 @@
     </div>
     <div class="field"><label>Nama Proktor</label><input id="inpNamaProktor" placeholder="cth. Siti Aminah, S.Pd."></div>
     <div class="field"><label>Email Proktor</label><input id="inpEmail" placeholder="proktor@sekolah.sch.id"></div>
-    <div id="modalMsg" class="field-msg"></div>
+    <div id="modalMsg" class="msg"></div>
     <div id="hasilKode"></div>
     <div class="modal-actions">
       <button class="btn-ghost" onclick="tutupModalKode()">Tutup</button>
-      <button class="btn btn-primary" id="btnGenerate" onclick="submitGenerateKode()">Generate Kode</button>
+      <button class="btn btn-primary" style="width:auto;" id="btnGenerate" onclick="submitGenerateKode()">Generate Kode</button>
     </div>
   </div>
 </div>
 
 <script>
-  // ==========================================================
-  // GANTI URL INI dengan URL Web App hasil Deploy dari Code.gs
-  // ==========================================================
   const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzavUXVeEDNf_65an-rb37OEzV03nF_MtzrzBe1sVBFL3lpFR6UxbhpHFoU7d9cT_TSuw/exec';
 
   let daftarProktorCache = [];
+  let dataMasterCache = { literasiNumerasi: [], gayaBelajar: [] };
+  let jenjangMasterAktif = 'SMP';
 
-  document.getElementById('tanggalHariIni').textContent =
-    'Pantauan seluruh sekolah yang menggunakan ALINEA · ' +
-    new Date().toLocaleDateString('id-ID', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
-
-  // ---- Helper JSONP: panggil Code.gs tanpa masalah CORS ----
   function callGAS(action, params) {
     return new Promise((resolve, reject) => {
       const callbackName = 'cb_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
-      window[callbackName] = (data) => {
-        resolve(data);
-        delete window[callbackName];
-        script.remove();
-      };
+      window[callbackName] = (data) => { resolve(data); delete window[callbackName]; script.remove(); };
       const query = new URLSearchParams({ action, callback: callbackName, ...params });
       const script = document.createElement('script');
       script.src = WEB_APP_URL + '?' + query.toString();
@@ -211,7 +312,65 @@
     });
   }
 
-  // ---- Muat daftar proktor dari Sheet Index Pusat ----
+  window.addEventListener('DOMContentLoaded', () => {
+    if (sessionStorage.getItem('alinea_admin_login') === 'true') {
+      tampilkanDashboard();
+    }
+  });
+
+  async function submitLogin() {
+    const password = document.getElementById('inpPassword').value;
+    const msgEl = document.getElementById('loginMsg');
+    const btn = document.getElementById('btnLogin');
+
+    if (!password) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = 'Kata sandi wajib diisi.';
+      return;
+    }
+
+    btn.disabled = true; btn.textContent = 'Memeriksa...';
+    try {
+      const res = await callGAS('loginAdmin', { password });
+      if (res.success) {
+        sessionStorage.setItem('alinea_admin_login', 'true');
+        tampilkanDashboard();
+      } else {
+        msgEl.className = 'msg error';
+        msgEl.textContent = res.message;
+      }
+    } catch (err) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = 'Gagal terhubung ke server.';
+    }
+    btn.disabled = false; btn.textContent = 'Masuk';
+  }
+
+  function logout() {
+    sessionStorage.removeItem('alinea_admin_login');
+    document.getElementById('appScreen').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('inpPassword').value = '';
+  }
+
+  function tampilkanDashboard() {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('appScreen').style.display = 'block';
+    document.getElementById('tanggalHariIni').textContent =
+      'Pantauan seluruh sekolah yang menggunakan ALINEA · ' +
+      new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+    muatDaftarProktor();
+    muatMasterSoal();
+    muatPengaturanSistem();
+  }
+
+  function pindahSection(nama) {
+    document.querySelectorAll('.sidenav button').forEach(b => b.classList.toggle('active', b.dataset.section === nama));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById('section-' + nama).classList.add('active');
+  }
+
   async function muatDaftarProktor() {
     try {
       const res = await callGAS('getDaftarProktor', {});
@@ -219,11 +378,10 @@
         daftarProktorCache = res.data;
         renderStats();
         renderTabel();
-      } else {
-        tampilkanErrorTabel(res.message);
+        renderTabelRingkas();
       }
     } catch (err) {
-      tampilkanErrorTabel('Tidak bisa terhubung ke server. Cek URL Web App di kode.');
+      tampilkanErrorTabel('Tidak bisa terhubung ke server.');
     }
   }
 
@@ -233,20 +391,26 @@
     document.getElementById('statBelum').textContent = daftarProktorCache.filter(p => p.status === 'Belum Setup').length;
   }
 
+  function renderTabelRingkas() {
+    const tbody = document.getElementById('tabelRingkas');
+    const terbaru = [...daftarProktorCache].slice(-5).reverse();
+    if (terbaru.length === 0) { tbody.innerHTML = '<tr class="empty-row"><td colspan="3">Belum ada sekolah terdaftar.</td></tr>'; return; }
+    tbody.innerHTML = terbaru.map(p => `<tr>
+      <td><span class="kode">${p.kode_proktor}</span></td>
+      <td class="sekolah">${p.nama_sekolah}</td>
+      <td><span class="badge ${p.status === 'Aktif' ? 'aktif' : 'nonaktif'}"><span class="dot"></span>${p.status}</span></td>
+    </tr>`).join('');
+  }
+
   function renderTabel() {
     const keyword = document.getElementById('searchInput').value.toLowerCase();
     const tbody = document.getElementById('tabelProktor');
     const filtered = daftarProktorCache.filter(p =>
       p.nama_sekolah.toLowerCase().includes(keyword) || p.kode_proktor.toLowerCase().includes(keyword)
     );
-
-    if (filtered.length === 0) {
-      tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Belum ada proktor terdaftar.</td></tr>';
-      return;
-    }
-
+    if (filtered.length === 0) { tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Belum ada proktor terdaftar.</td></tr>'; return; }
     tbody.innerHTML = filtered.map(p => {
-      const statusClass = p.status === 'Aktif' ? 'aktif' : 'belum';
+      const statusClass = p.status === 'Aktif' ? 'aktif' : 'nonaktif';
       const tombolAksi = p.status === 'Nonaktif'
         ? `<button class="link" onclick="ubahStatus('${p.kode_proktor}','Aktif')">Aktifkan</button>`
         : `<button class="link danger" onclick="ubahStatus('${p.kode_proktor}','Nonaktif')">Nonaktifkan</button>`;
@@ -261,8 +425,7 @@
   }
 
   function tampilkanErrorTabel(pesan) {
-    document.getElementById('tabelProktor').innerHTML =
-      `<tr class="empty-row"><td colspan="5">${pesan}</td></tr>`;
+    document.getElementById('tabelProktor').innerHTML = `<tr class="empty-row"><td colspan="5">${pesan}</td></tr>`;
   }
 
   async function ubahStatus(kode, statusBaru) {
@@ -270,15 +433,14 @@
     muatDaftarProktor();
   }
 
-  // ---- Modal generate kode ----
   function bukaModalKode() {
     document.getElementById('modalKode').classList.add('show');
-    document.getElementById('modalMsg').className = 'field-msg';
+    document.getElementById('modalMsg').className = 'msg';
     document.getElementById('hasilKode').innerHTML = '';
   }
   function tutupModalKode() {
     document.getElementById('modalKode').classList.remove('show');
-    ['inpNamaSekolah','inpNamaProktor','inpEmail'].forEach(id => document.getElementById(id).value = '');
+    ['inpNamaSekolah', 'inpNamaProktor', 'inpEmail'].forEach(id => document.getElementById(id).value = '');
     muatDaftarProktor();
   }
 
@@ -291,34 +453,199 @@
     const btn = document.getElementById('btnGenerate');
 
     if (!namaSekolah || !namaProktor) {
-      msgEl.className = 'field-msg error';
+      msgEl.className = 'msg error';
       msgEl.textContent = 'Nama sekolah dan nama proktor wajib diisi.';
       return;
     }
 
-    btn.disabled = true;
-    btn.textContent = 'Memproses...';
-
+    btn.disabled = true; btn.textContent = 'Memproses...';
     try {
       const res = await callGAS('generateKodeProktor', { namaSekolah, jenjang, namaProktor, email });
       if (res.success) {
-        msgEl.className = 'field-msg success';
-        msgEl.textContent = 'Kode berhasil dibuat. Salin dan kirim ke proktor sekolah.';
+        msgEl.className = 'msg success';
+        msgEl.textContent = 'Kode berhasil dibuat.';
         document.getElementById('hasilKode').innerHTML = `<div class="kode-hasil">${res.kode}</div>`;
       } else {
-        msgEl.className = 'field-msg error';
+        msgEl.className = 'msg error';
         msgEl.textContent = res.message;
       }
     } catch (err) {
-      msgEl.className = 'field-msg error';
+      msgEl.className = 'msg error';
       msgEl.textContent = 'Gagal terhubung ke server.';
     }
-
-    btn.disabled = false;
-    btn.textContent = 'Generate Kode';
+    btn.disabled = false; btn.textContent = 'Generate Kode';
   }
 
-  muatDaftarProktor();
+  function gantiJenjangMaster(nama) {
+    jenjangMasterAktif = nama;
+    document.querySelectorAll('[data-jenjang]').forEach(b => b.classList.toggle('active', b.dataset.jenjang === nama));
+    document.getElementById('formMasterLN').style.display = nama === 'Gaya' ? 'none' : 'block';
+    document.getElementById('formMasterGaya').style.display = nama === 'Gaya' ? 'block' : 'none';
+    document.getElementById('judulTabelMaster').textContent = nama === 'Gaya' ? 'Daftar Pernyataan Master — Gaya Belajar' : 'Daftar Soal Master — ' + nama;
+    if (nama === 'Gaya') {
+      document.getElementById('theadMaster').innerHTML = '<tr><th>ID</th><th>Pernyataan</th><th>Tipe</th><th></th></tr>';
+    } else {
+      document.getElementById('theadMaster').innerHTML = '<tr><th>ID</th><th>Kategori</th><th>Pertanyaan</th><th>Kunci</th><th>Level</th><th></th></tr>';
+      muatMasterSoal();
+    }
+    renderTabelMaster();
+  }
+
+  async function muatMasterSoal() {
+    try {
+      const jenjangUntukFetch = jenjangMasterAktif === 'Gaya' ? 'SMP' : jenjangMasterAktif;
+      const res = await callGAS('getMasterSoal', { jenjang: jenjangUntukFetch });
+      if (res.success) {
+        dataMasterCache = res;
+        renderTabelMaster();
+      }
+    } catch (err) { /* diamkan */ }
+  }
+
+  function renderTabelMaster() {
+    const tbody = document.getElementById('bodyMaster');
+    if (jenjangMasterAktif === 'Gaya') {
+      const data = dataMasterCache.gayaBelajar || [];
+      if (data.length === 0) { tbody.innerHTML = '<tr class="empty-row"><td colspan="4">Belum ada pernyataan master.</td></tr>'; return; }
+      tbody.innerHTML = data.map(g => `<tr>
+        <td><span class="kode">${g.id_soal}</span></td>
+        <td>${g.pernyataan}</td>
+        <td><span class="jenjang-pill">${g.tipe_gaya}</span></td>
+        <td><button class="btn-hapus" onclick="konfirmasiHapusMaster('${g.id_soal}','gaya_belajar')">✕</button></td>
+      </tr>`).join('');
+    } else {
+      const data = dataMasterCache.literasiNumerasi || [];
+      if (data.length === 0) { tbody.innerHTML = '<tr class="empty-row"><td colspan="6">Belum ada soal master.</td></tr>'; return; }
+      tbody.innerHTML = data.map(s => `<tr>
+        <td><span class="kode">${s.id_soal}</span></td>
+        <td>${s.kategori}</td>
+        <td>${String(s.pertanyaan).slice(0, 55)}${String(s.pertanyaan).length > 55 ? '…' : ''}</td>
+        <td>${s.kunci_jawaban}</td>
+        <td>${s.level_kesulitan}</td>
+        <td><button class="btn-hapus" onclick="konfirmasiHapusMaster('${s.id_soal}','ln')">✕</button></td>
+      </tr>`).join('');
+    }
+  }
+
+  async function submitTambahMaster() {
+    const payload = {
+      jenjang: jenjangMasterAktif,
+      kategori: document.getElementById('mKategori').value,
+      pertanyaan: document.getElementById('mPertanyaan').value.trim(),
+      petikan: document.getElementById('mPetikan').value.trim(),
+      pilihanA: document.getElementById('mA').value.trim(),
+      pilihanB: document.getElementById('mB').value.trim(),
+      pilihanC: document.getElementById('mC').value.trim(),
+      pilihanD: document.getElementById('mD').value.trim(),
+      kunciJawaban: document.getElementById('mKunci').value,
+      levelKesulitan: document.getElementById('mLevel').value
+    };
+    const msgEl = document.getElementById('masterMsg');
+
+    if (!payload.pertanyaan || !payload.pilihanA || !payload.pilihanB || !payload.pilihanC || !payload.pilihanD) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = 'Pertanyaan dan keempat pilihan wajib diisi.';
+      return;
+    }
+
+    try {
+      const res = await callGAS('tambahMasterSoal', payload);
+      msgEl.className = res.success ? 'msg success' : 'msg error';
+      msgEl.textContent = res.message;
+      if (res.success) {
+        ['mPertanyaan', 'mPetikan', 'mA', 'mB', 'mC', 'mD'].forEach(id => document.getElementById(id).value = '');
+        muatMasterSoal();
+      }
+    } catch (err) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = 'Gagal terhubung ke server.';
+    }
+  }
+
+  async function submitTambahMasterGaya() {
+    const pernyataan = document.getElementById('mgPernyataan').value.trim();
+    const tipeGaya = document.getElementById('mgTipe').value;
+    const msgEl = document.getElementById('masterGayaMsg');
+
+    if (!pernyataan) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = 'Pernyataan wajib diisi.';
+      return;
+    }
+
+    try {
+      const res = await callGAS('tambahMasterGaya', { pernyataan, tipeGaya });
+      msgEl.className = res.success ? 'msg success' : 'msg error';
+      msgEl.textContent = res.message;
+      if (res.success) {
+        document.getElementById('mgPernyataan').value = '';
+        muatMasterSoal();
+      }
+    } catch (err) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = 'Gagal terhubung ke server.';
+    }
+  }
+
+  async function konfirmasiHapusMaster(idSoal, jenisSoal) {
+    if (!confirm('Hapus data master ' + idSoal + '?')) return;
+    const jenjangUntukFetch = jenjangMasterAktif === 'Gaya' ? 'SMP' : jenjangMasterAktif;
+    await callGAS('hapusMasterSoal', { jenjang: jenjangUntukFetch, idSoal, jenisSoal });
+    muatMasterSoal();
+  }
+
+  async function muatPengaturanSistem() {
+    try {
+      const res = await callGAS('getPengaturanSistem', {});
+      if (res.success) {
+        document.getElementById('pEmailSistem').value = res.data.email_sistem || '';
+      }
+    } catch (err) { /* diamkan */ }
+  }
+
+  async function submitEmailSistem() {
+    const emailSistem = document.getElementById('pEmailSistem').value.trim();
+    const msgEl = document.getElementById('emailMsg');
+    if (!emailSistem) { msgEl.className = 'msg error'; msgEl.textContent = 'Email wajib diisi.'; return; }
+    try {
+      const res = await callGAS('simpanPengaturanSistem', { emailSistem });
+      msgEl.className = res.success ? 'msg success' : 'msg error';
+      msgEl.textContent = res.message;
+    } catch (err) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = 'Gagal terhubung ke server.';
+    }
+  }
+
+  async function submitPasswordBaru() {
+    const passwordBaru = document.getElementById('pPasswordBaru').value;
+    const passwordUlang = document.getElementById('pPasswordUlang').value;
+    const msgEl = document.getElementById('passwordMsg');
+
+    if (!passwordBaru || passwordBaru.length < 6) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = 'Kata sandi minimal 6 karakter.';
+      return;
+    }
+    if (passwordBaru !== passwordUlang) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = 'Kata sandi baru dan ulangannya tidak sama.';
+      return;
+    }
+
+    try {
+      const res = await callGAS('simpanPengaturanSistem', { passwordBaru });
+      msgEl.className = res.success ? 'msg success' : 'msg error';
+      msgEl.textContent = res.success ? 'Kata sandi berhasil diubah.' : res.message;
+      if (res.success) {
+        document.getElementById('pPasswordBaru').value = '';
+        document.getElementById('pPasswordUlang').value = '';
+      }
+    } catch (err) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = 'Gagal terhubung ke server.';
+    }
+  }
 </script>
 </body>
 </html>
