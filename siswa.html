@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ALINEA — Tes Literasi, Numerasi &amp; Gaya Belajar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1A1A1A; --ink-soft:#4E4E4E; --ink-faint:#8A8A8A;
+    --paper:#F6F8FA; --paper-raised:#FFFFFF; --line:#E7EAEC;
+    --blue:#1D6FA8; --blue-deep:#124A73; --blue-tint:#E6F1FB;
+    --gold:#FBD206; --gold-deep:#9C6F0A; --gold-tint:#FFF6D2;
+    --danger:#AD3A2E; --danger-tint:#F5E1DE;
+    --success:#2E7D4F; --success-tint:#E1F0E6;
+    --shadow: 0 1px 2px rgba(26,26,26,0.04), 0 16px 40px -20px rgba(26,26,26,0.22);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--paper); color:var(--ink); font-family:'IBM Plex Sans',sans-serif; -webkit-font-smoothing:antialiased; min-height:100vh;}
+  .frame{max-width:720px; margin:0 auto; padding:22px 24px 40px; min-height:100vh; display:flex; flex-direction:column;}
+
+  /* ---------- Login ---------- */
+  .login-wrap{flex:1; display:flex; align-items:center; justify-content:center;}
+  .login-card{background:var(--paper-raised); border:1px solid var(--line); border-radius:28px 28px 28px 6px; box-shadow:var(--shadow); padding:38px 34px; width:100%; max-width:420px;}
+  .mark{width:44px; height:44px; border-radius:14px 14px 14px 4px; background:var(--blue); color:#fff; display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-style:italic; font-weight:600; font-size:24px; margin-bottom:18px;}
+  .login-card h1{font-family:'Fraunces',serif; font-size:23px; font-weight:700; margin:0 0 6px;}
+  .login-card p{font-size:13.5px; color:var(--ink-soft); margin:0 0 24px; line-height:1.55;}
+  .field{margin-bottom:14px;}
+  .field label{display:block; font-size:12.5px; font-weight:700; margin-bottom:6px; color:var(--ink-soft);}
+  .field input{width:100%; padding:12px 14px; border-radius:12px; border:1.5px solid var(--line); font-family:'IBM Plex Sans',sans-serif; font-size:15px; background:var(--paper);}
+  .btn{border:none; cursor:pointer; font-family:inherit; font-weight:700; font-size:14px; padding:13px 20px; border-radius:100px 100px 100px 4px; width:100%;}
+  .btn-primary{background:var(--blue); color:#fff;}
+  .btn-primary:disabled{opacity:0.6; cursor:wait;}
+  .msg{font-size:12.5px; margin-top:14px; padding:10px 12px; border-radius:10px; display:none;}
+  .msg.error{background:var(--danger-tint); color:var(--danger); display:block;}
+  .msg.info{background:var(--blue-tint); color:var(--blue-deep); display:block;}
+
+  /* ---------- Tes ---------- */
+  .app{display:none; flex:1; flex-direction:column;}
+  .topstrip{display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;}
+  .who{display:flex; align-items:center; gap:10px;}
+  .mark-sm{width:30px; height:30px; border-radius:10px 10px 10px 3px; background:var(--ink); color:var(--gold); display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-style:italic; font-weight:600; font-size:17px;}
+  .who-text{font-size:12.5px; line-height:1.3;}
+  .who-text b{display:block; font-size:13.5px;}
+  .timer-box{font-family:'IBM Plex Mono',monospace; font-size:19px; font-weight:700; background:var(--ink); color:var(--gold); padding:8px 16px; border-radius:100px 100px 100px 4px;}
+  .timer-box.warn{background:var(--danger); color:#fff;}
+
+  .warn-strip{background:var(--gold-tint); border:1px solid #F3E29A; color:#7A5A08; font-size:12.5px; padding:10px 14px; border-radius:14px 14px 14px 4px; margin-bottom:16px; text-align:center; font-weight:600;}
+
+  .progress-label{font-size:12.5px; color:var(--ink-faint); font-family:'IBM Plex Mono',monospace; margin-bottom:8px;}
+  .dots{display:flex; gap:5px; margin-bottom:22px; flex-wrap:wrap;}
+  .dot{width:22px; height:22px; border-radius:7px 7px 7px 2px; background:#EDEDED; display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-size:11px; color:var(--ink-faint); cursor:pointer; flex-shrink:0; font-weight:600;}
+  .dot.answered{background:var(--blue); color:#fff;}
+  .dot.current{outline:2px solid var(--gold); outline-offset:2px;}
+
+  .qcard{background:var(--paper-raised); border:1px solid var(--line); border-radius:28px 28px 28px 6px; box-shadow:var(--shadow); padding:30px 28px; flex:1; display:flex; flex-direction:column;}
+  .kategori{display:inline-flex; align-items:center; gap:7px; font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.4px; padding:7px 14px; border-radius:100px 100px 100px 4px; margin-bottom:18px; width:fit-content;}
+  .kategori.literasi{background:var(--blue); color:#fff;}
+  .kategori.numerasi{background:var(--gold); color:#7A5A08;}
+  .qtext{font-family:'Fraunces',serif; font-size:20px; line-height:1.5; font-weight:600; margin:0 0 22px;}
+  .qtext .petikan{display:block; background:var(--blue-tint); border-left:4px solid var(--blue); padding:14px 16px; border-radius:2px 12px 12px 2px; font-size:14.5px; font-family:'IBM Plex Sans',sans-serif; color:var(--blue-deep); margin-top:14px; font-weight:400;}
+
+  .options{display:flex; flex-direction:column; gap:10px; margin-top:auto;}
+  .opt{display:flex; align-items:center; gap:14px; border:1.5px solid var(--line); border-radius:14px 14px 14px 4px; padding:14px 16px; cursor:pointer;}
+  .opt:hover{border-color:var(--ink-faint);}
+  .opt.selected{border-color:var(--blue); background:var(--blue-tint);}
+  .opt-letter{width:28px; height:28px; border-radius:9px 9px 9px 3px; background:var(--paper); display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:13px; color:var(--ink-soft); flex-shrink:0;}
+  .opt.selected .opt-letter{background:var(--blue); color:#fff;}
+  .opt-text{font-size:14.5px;}
+
+  .navrow{display:flex; justify-content:space-between; align-items:center; margin-top:22px;}
+  .btn-ghost{background:transparent; border:1.5px solid var(--line); color:var(--ink-soft); width:auto; padding:12px 20px;}
+  .btn-ghost:disabled{opacity:0.4; cursor:not-allowed;}
+  .btn-next{width:auto; padding:12px 22px; background:var(--ink); color:var(--gold);}
+  .btn-finish{width:auto; padding:12px 22px; background:var(--blue); color:#fff;}
+
+  /* ---------- Gaya Belajar ---------- */
+  .gaya-list{display:flex; flex-direction:column; gap:12px; flex:1; overflow-y:auto; padding-right:4px;}
+  .gaya-item{border:1.5px solid var(--line); border-radius:16px 16px 16px 4px; padding:16px 18px;}
+  .gaya-item p{margin:0 0 12px; font-size:14.5px; line-height:1.5;}
+  .gaya-btns{display:flex; gap:10px;}
+  .gbtn{flex:1; padding:9px; border-radius:10px; border:1.5px solid var(--line); background:var(--paper); font-family:inherit; font-weight:700; font-size:13px; cursor:pointer; color:var(--ink-soft);}
+  .gbtn.selected.ya{background:var(--success); color:#fff; border-color:var(--success);}
+  .gbtn.selected.tidak{background:var(--danger); color:#fff; border-color:var(--danger);}
+
+  /* ---------- Hasil ---------- */
+  .hasil-wrap{flex:1; display:flex; align-items:center; justify-content:center;}
+  .hasil-card{background:var(--paper-raised); border:1px solid var(--line); border-radius:28px 28px 28px 6px; box-shadow:var(--shadow); padding:36px 32px; width:100%; text-align:center;}
+  .hasil-card h1{font-family:'Fraunces',serif; font-size:24px; margin:0 0 8px;}
+  .hasil-card p.sub{color:var(--ink-soft); font-size:14px; margin:0 0 28px;}
+  .hasil-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px;}
+  .hasil-stat{border-radius:18px 18px 18px 4px; padding:20px; text-align:left;}
+  .hasil-stat.blue{background:var(--blue); color:#fff;}
+  .hasil-stat.gold{background:var(--gold); color:var(--ink);}
+  .hasil-stat .lbl{font-size:11.5px; text-transform:uppercase; letter-spacing:0.3px; opacity:0.85; margin-bottom:6px;}
+  .hasil-stat .val{font-family:'Fraunces',serif; font-size:30px; font-weight:700;}
+  .hasil-stat .cat{font-size:12.5px; margin-top:4px; font-weight:600;}
+  .hasil-gaya{background:var(--ink); color:var(--gold); border-radius:18px 18px 18px 4px; padding:18px; font-family:'Fraunces',serif; font-size:17px; font-weight:700;}
+</style>
+</head>
+<body>
+<div class="frame">
+
+  <!-- ===================== LOGIN ===================== -->
+  <div class="login-wrap" id="loginScreen">
+    <div class="login-card">
+      <div class="mark">¶</div>
+      <h1>Tes ALINEA</h1>
+      <p>Masukkan NISN dan nama lengkap sesuai data yang didaftarkan sekolah untuk memulai asesmen.</p>
+      <div class="field"><label>NISN</label><input id="inpNisn" placeholder="cth. 0091238471" inputmode="numeric"></div>
+      <div class="field"><label>Nama Lengkap</label><input id="inpNama" placeholder="Sesuai nama terdaftar"></div>
+      <button class="btn btn-primary" id="btnMasuk" onclick="submitMasuk()">Mulai</button>
+      <div class="msg" id="loginMsg"></div>
+    </div>
+  </div>
+
+  <!-- ===================== TES LITERASI-NUMERASI ===================== -->
+  <div class="app" id="appLN">
+    <div class="topstrip">
+      <div class="who">
+        <div class="mark-sm">¶</div>
+        <div class="who-text"><b id="namaTampil">-</b><span id="nisnTampil"></span></div>
+      </div>
+      <div class="timer-box" id="timer">--:--</div>
+    </div>
+    <div class="warn-strip">Jangan tutup atau muat ulang jendela ini selama tes berlangsung.</div>
+    <div class="progress-label" id="progLabel"></div>
+    <div class="dots" id="dots"></div>
+    <div class="qcard">
+      <div id="qbody"></div>
+      <div class="navrow">
+        <button class="btn btn-ghost" id="btnPrev">← Sebelumnya</button>
+        <button class="btn btn-next" id="btnNext">Berikutnya →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== KUESIONER GAYA BELAJAR ===================== -->
+  <div class="app" id="appGaya">
+    <div class="topstrip">
+      <div class="who">
+        <div class="mark-sm">¶</div>
+        <div class="who-text"><b>Bagian Kedua</b><span>Gaya Belajar — jawab sesuai kebiasaan Anda</span></div>
+      </div>
+      <div class="timer-box" id="timerGaya">--:--</div>
+    </div>
+    <p class="progress-label">Pilih "Ya" kalau pernyataan sesuai dengan kebiasaan belajar Anda.</p>
+    <div class="gaya-list" id="gayaList"></div>
+    <div class="navrow">
+      <span></span>
+      <button class="btn btn-finish" id="btnSelesai" onclick="submitTesFinal()">Selesai &amp; Kumpulkan</button>
+    </div>
+  </div>
+
+  <!-- ===================== HASIL ===================== -->
+  <div class="hasil-wrap" id="hasilScreen" style="display:none;">
+    <div class="hasil-card">
+      <div class="mark" style="margin:0 auto 18px;">¶</div>
+      <h1>Tes Selesai!</h1>
+      <p class="sub">Terima kasih sudah mengerjakan dengan sungguh-sungguh.</p>
+      <div class="hasil-grid">
+        <div class="hasil-stat blue">
+          <div class="lbl">Literasi</div>
+          <div class="val" id="hasilLiterasi">-</div>
+          <div class="cat" id="hasilKategoriL"></div>
+        </div>
+        <div class="hasil-stat gold">
+          <div class="lbl">Numerasi</div>
+          <div class="val" id="hasilNumerasi">-</div>
+          <div class="cat" id="hasilKategoriN"></div>
+        </div>
+      </div>
+      <div class="hasil-gaya" id="hasilGaya">Gaya Belajar: -</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzavUXVeEDNf_65an-rb37OEzV03nF_MtzrzBe1sVBFL3lpFR6UxbhpHFoU7d9cT_TSuw/exec';
+
+  let sesiSiswa = {}; // { kode, nisn, nama, durasiMenit, waktuMulai, soalLN, soalGaya }
+  let jawabanLN = {};
+  let jawabanGaya = {};
+  let currentLN = 0;
+  let timerInterval = null;
+
+  function callGAS(action, params) {
+    return new Promise((resolve, reject) => {
+      const callbackName = 'cb_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
+      window[callbackName] = (data) => { resolve(data); delete window[callbackName]; script.remove(); };
+      const query = new URLSearchParams({ action, callback: callbackName, ...params });
+      const script = document.createElement('script');
+      script.src = WEB_APP_URL + '?' + query.toString();
+      script.onerror = () => { reject(new Error('Gagal terhubung ke server.')); script.remove(); };
+      document.body.appendChild(script);
+    });
+  }
+
+  // ================= LOGIN =================
+  async function submitMasuk() {
+    const nisn = document.getElementById('inpNisn').value.trim();
+    const nama = document.getElementById('inpNama').value.trim();
+    const msgEl = document.getElementById('loginMsg');
+    const btn = document.getElementById('btnMasuk');
+
+    if (!nisn || !nama) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = 'NISN dan nama wajib diisi.';
+      return;
+    }
+
+    btn.disabled = true; btn.textContent = 'Memeriksa...';
+    msgEl.className = 'msg';
+
+    try {
+      const cari = await callGAS('cariPeserta', { nisn, nama });
+      if (!cari.success) {
+        msgEl.className = 'msg error';
+        msgEl.textContent = cari.message;
+        btn.disabled = false; btn.textContent = 'Mulai';
+        return;
+      }
+      if (cari.sudahMengerjakan) {
+        msgEl.className = 'msg info';
+        msgEl.textContent = 'Anda sudah menyelesaikan tes ini sebelumnya. Terima kasih!';
+        btn.disabled = false; btn.textContent = 'Mulai';
+        return;
+      }
+
+      const mulai = await callGAS('mulaiTes', { kode: cari.kode, nisn });
+      if (!mulai.success) {
+        msgEl.className = 'msg error';
+        msgEl.textContent = mulai.message;
+        btn.disabled = false; btn.textContent = 'Mulai';
+        return;
+      }
+
+      sesiSiswa = {
+        kode: cari.kode, nisn, nama: cari.nama,
+        durasiMenit: mulai.durasiMenit, waktuMulai: mulai.waktuMulai,
+        soalLN: mulai.soalLiterasiNumerasi, soalGaya: mulai.soalGayaBelajar
+      };
+
+      mulaiTampilanTes();
+    } catch (err) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = 'Gagal terhubung ke server.';
+      btn.disabled = false; btn.textContent = 'Mulai';
+    }
+  }
+
+  // ================= MULAI TES =================
+  function mulaiTampilanTes() {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('appLN').style.display = 'flex';
+    document.getElementById('namaTampil').textContent = sesiSiswa.nama;
+    document.getElementById('nisnTampil').textContent = 'NISN ' + sesiSiswa.nisn;
+
+    mulaiTimer();
+    currentLN = 0;
+    renderSoalLN();
+  }
+
+  function mulaiTimer() {
+    const deadline = new Date(sesiSiswa.waktuMulai).getTime() + sesiSiswa.durasiMenit * 60 * 1000;
+    function tick() {
+      const sisaMs = deadline - Date.now();
+      if (sisaMs <= 0) {
+        clearInterval(timerInterval);
+        submitTesFinal(true);
+        return;
+      }
+      const menit = Math.floor(sisaMs / 60000);
+      const detik = Math.floor((sisaMs % 60000) / 1000);
+      const teks = String(menit).padStart(2, '0') + ':' + String(detik).padStart(2, '0');
+      ['timer', 'timerGaya'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.textContent = teks;
+          el.classList.toggle('warn', menit < 5);
+        }
+      });
+    }
+    tick();
+    timerInterval = setInterval(tick, 1000);
+  }
+
+  // ================= SOAL LITERASI-NUMERASI =================
+  function renderSoalLN() {
+    const soal = sesiSiswa.soalLN;
+    const q = soal[currentLN];
+
+    document.getElementById('progLabel').textContent = `SOAL ${currentLN + 1} DARI ${soal.length}`;
+    document.getElementById('dots').innerHTML = soal.map((s, i) =>
+      `<div class="dot ${jawabanLN[s.id_soal] ? 'answered' : ''} ${i === currentLN ? 'current' : ''}" data-i="${i}">${i + 1}</div>`
+    ).join('');
+    document.querySelectorAll('#dots .dot').forEach(d => d.addEventListener('click', () => { currentLN = +d.dataset.i; renderSoalLN(); }));
+
+    const catClass = q.kategori === 'Literasi' ? 'literasi' : 'numerasi';
+    const opsi = [['A', q.pilihan_a], ['B', q.pilihan_b], ['C', q.pilihan_c], ['D', q.pilihan_d]];
+
+    document.getElementById('qbody').innerHTML = `
+      <span class="kategori ${catClass}">${q.kategori}</span>
+      <p class="qtext">${q.pertanyaan}${q.petikan ? `<span class="petikan">${q.petikan}</span>` : ''}</p>
+      <div class="options">
+        ${opsi.map(([huruf, teks]) => `<div class="opt ${jawabanLN[q.id_soal] === huruf ? 'selected' : ''}" data-huruf="${huruf}">
+          <div class="opt-letter">${huruf}</div><div class="opt-text">${teks}</div>
+        </div>`).join('')}
+      </div>`;
+
+    document.querySelectorAll('#qbody .opt').forEach(o => o.addEventListener('click', () => {
+      jawabanLN[q.id_soal] = o.dataset.huruf;
+      renderSoalLN();
+    }));
+
+    document.getElementById('btnPrev').disabled = currentLN === 0;
+    const btnNext = document.getElementById('btnNext');
+    btnNext.textContent = currentLN === soal.length - 1 ? 'Lanjut ke Gaya Belajar →' : 'Berikutnya →';
+  }
+
+  document.getElementById('btnPrev').addEventListener('click', () => { if (currentLN > 0) { currentLN--; renderSoalLN(); } });
+  document.getElementById('btnNext').addEventListener('click', () => {
+    if (currentLN < sesiSiswa.soalLN.length - 1) { currentLN++; renderSoalLN(); }
+    else { tampilkanGayaBelajar(); }
+  });
+
+  // ================= KUESIONER GAYA BELAJAR =================
+  function tampilkanGayaBelajar() {
+    document.getElementById('appLN').style.display = 'none';
+    document.getElementById('appGaya').style.display = 'flex';
+
+    const list = document.getElementById('gayaList');
+    list.innerHTML = sesiSiswa.soalGaya.map(g => `
+      <div class="gaya-item">
+        <p>${g.pernyataan}</p>
+        <div class="gaya-btns" data-id="${g.id_soal}">
+          <button class="gbtn ${jawabanGaya[g.id_soal] === 'Ya' ? 'selected ya' : ''}" data-val="Ya">Ya, sesuai saya</button>
+          <button class="gbtn ${jawabanGaya[g.id_soal] === 'Tidak' ? 'selected tidak' : ''}" data-val="Tidak">Tidak sesuai</button>
+        </div>
+      </div>`).join('');
+
+    list.querySelectorAll('.gaya-btns').forEach(row => {
+      row.querySelectorAll('.gbtn').forEach(btn => btn.addEventListener('click', () => {
+        jawabanGaya[row.dataset.id] = btn.dataset.val;
+        row.querySelectorAll('.gbtn').forEach(b => b.classList.remove('selected', 'ya', 'tidak'));
+        btn.classList.add('selected', btn.dataset.val === 'Ya' ? 'ya' : 'tidak');
+      }));
+    });
+  }
+
+  // ================= SUBMIT AKHIR =================
+  async function submitTesFinal(otomatis) {
+    clearInterval(timerInterval);
+    const btn = document.getElementById('btnSelesai');
+    if (btn) { btn.disabled = true; btn.textContent = 'Mengirim...'; }
+
+    try {
+      const res = await fetch(WEB_APP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'submitTes', kode: sesiSiswa.kode, nisn: sesiSiswa.nisn, jawabanLN, jawabanGaya })
+      });
+      const data = await res.json();
+      tampilkanHasil(data, otomatis);
+    } catch (err) {
+      alert('Gagal mengirim jawaban. Periksa koneksi internet Anda, lalu coba tombol Selesai sekali lagi.');
+      if (btn) { btn.disabled = false; btn.textContent = 'Selesai & Kumpulkan'; }
+    }
+  }
+
+  function tampilkanHasil(data, otomatis) {
+    document.getElementById('appLN').style.display = 'none';
+    document.getElementById('appGaya').style.display = 'none';
+    document.getElementById('hasilScreen').style.display = 'flex';
+
+    if (!data.success) {
+      document.querySelector('.hasil-card').innerHTML = `<div class="mark" style="margin:0 auto 18px;">¶</div><h1>Tes Selesai</h1><p class="sub">${data.message || 'Jawaban Anda telah tercatat.'}</p>`;
+      return;
+    }
+
+    document.getElementById('hasilLiterasi').textContent = data.skorLiterasi;
+    document.getElementById('hasilKategoriL').textContent = data.kategoriLiterasi;
+    document.getElementById('hasilNumerasi').textContent = data.skorNumerasi;
+    document.getElementById('hasilKategoriN').textContent = data.kategoriNumerasi;
+    document.getElementById('hasilGaya').textContent = 'Gaya Belajar Dominan: ' + data.gayaDominan;
+
+    if (otomatis) {
+      const p = document.createElement('p');
+      p.className = 'sub';
+      p.textContent = 'Waktu pengerjaan habis — jawaban Anda otomatis dikumpulkan.';
+      document.querySelector('.hasil-card p.sub').replaceWith(p);
+    }
+  }
+</script>
+</body>
+</html>

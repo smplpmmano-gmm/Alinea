@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ALINEA — Menu Proktor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1A1A1A; --ink-soft:#4E4E4E; --ink-faint:#8A8A8A;
+    --paper:#FAFBFC; --paper-raised:#FFFFFF; --line:#E7EAEC;
+    --blue:#1D6FA8; --blue-deep:#124A73; --blue-tint:#E6F1FB;
+    --gold:#FBD206; --gold-deep:#9C6F0A; --gold-tint:#FFF6D2;
+    --danger:#AD3A2E; --danger-tint:#F5E1DE;
+    --success:#2E7D4F; --success-tint:#E1F0E6;
+    --shadow: 0 1px 2px rgba(26,26,26,0.04), 0 12px 28px -18px rgba(26,26,26,0.20);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--paper); color:var(--ink); font-family:'IBM Plex Sans',sans-serif; -webkit-font-smoothing:antialiased;}
+
+  /* ---------- Layar Login ---------- */
+  .login-screen{min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;}
+  .login-card{background:var(--paper-raised); border:1px solid var(--line); border-radius:28px 28px 28px 6px; box-shadow:var(--shadow); padding:38px 34px; width:100%; max-width:400px;}
+  .login-mark{width:44px; height:44px; border-radius:14px 14px 14px 4px; background:var(--blue); color:#fff; display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-style:italic; font-weight:600; font-size:24px; margin-bottom:18px;}
+  .login-card h1{font-family:'Fraunces',serif; font-size:24px; font-weight:700; margin:0 0 6px;}
+  .login-card p{font-size:13.5px; color:var(--ink-soft); margin:0 0 26px; line-height:1.5;}
+  .field label{display:block; font-size:12.5px; font-weight:700; margin-bottom:6px; color:var(--ink-soft);}
+  .field input{width:100%; padding:12px 14px; border-radius:12px; border:1.5px solid var(--line); font-family:'IBM Plex Mono',monospace; font-size:15px; background:var(--paper); text-transform:uppercase; letter-spacing:1px;}
+  .btn{border:none; cursor:pointer; font-family:inherit; font-weight:700; font-size:14px; padding:13px 20px; border-radius:100px 100px 100px 4px; width:100%; margin-top:16px;}
+  .btn-primary{background:var(--blue); color:#fff;}
+  .btn-primary:disabled{opacity:0.6; cursor:wait;}
+  .msg{font-size:12.5px; margin-top:14px; padding:10px 12px; border-radius:10px; display:none;}
+  .msg.error{background:var(--danger-tint); color:var(--danger); display:block;}
+
+  /* ---------- Layar Dashboard (sidebar + section) ---------- */
+  .app{display:none;}
+  .shell{display:grid; grid-template-columns:250px 1fr; min-height:100vh;}
+  .sidebar{background:var(--paper-raised); border-right:1px solid var(--line); padding:24px 18px; display:flex; flex-direction:column; position:sticky; top:0; height:100vh; overflow-y:auto;}
+  .brand{display:flex; align-items:center; gap:10px; margin-bottom:18px;}
+  .mark{width:32px; height:32px; border-radius:10px 10px 10px 3px; background:var(--gold); color:var(--ink); display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-style:italic; font-weight:600; font-size:18px; flex-shrink:0;}
+  .brand-name{font-family:'Fraunces',serif; font-weight:700; font-size:16px;}
+
+  .school-badge{background:var(--blue); color:#fff; border-radius:16px 16px 16px 5px; padding:14px 16px; margin-bottom:18px;}
+  .school-badge .nama{font-family:'Fraunces',serif; font-weight:700; font-size:15px; margin:0 0 3px; line-height:1.3;}
+  .school-badge .meta{font-size:11px; color:#CFE4F3; font-family:'IBM Plex Mono',monospace;}
+
+  nav.sidenav{display:flex; flex-direction:column; gap:3px;}
+  nav.sidenav button{display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px 10px 10px 3px; color:var(--ink-soft); background:none; border:none; text-align:left; font-size:13.5px; font-weight:600; cursor:pointer; font-family:inherit; width:100%;}
+  nav.sidenav button.active{background:var(--gold-tint); color:var(--gold-deep);}
+  nav.sidenav button:hover:not(.active):not(.locked){background:var(--paper);}
+  nav.sidenav button.locked{color:var(--ink-faint); cursor:not-allowed; opacity:0.55;}
+  .sidebar-foot{margin-top:auto; padding-top:16px; border-top:1px solid var(--line);}
+  .logout{font-size:12.5px; color:var(--ink-faint); text-decoration:none; cursor:pointer; background:none; border:none; font-family:inherit; padding:0;}
+
+  main.content{padding:32px 36px 60px; max-width:840px;}
+  .section{display:none;}
+  .section.active{display:block;}
+  .page-title{font-family:'Fraunces',serif; font-size:22px; font-weight:700; margin:0 0 20px;}
+
+  .card{background:var(--paper-raised); border:1px solid var(--line); border-radius:22px; box-shadow:var(--shadow); padding:24px 26px; margin-bottom:20px;}
+  .card h2{font-family:'Fraunces',serif; font-size:18px; font-weight:700; margin:0 0 8px;}
+  .card p.desc{font-size:13.5px; color:var(--ink-soft); line-height:1.6; margin:0 0 20px;}
+
+  .steps{list-style:none; margin:0 0 22px; padding:0; display:flex; flex-direction:column; gap:10px;}
+  .steps li{display:flex; gap:12px; font-size:13.5px; line-height:1.5;}
+  .steps .num{width:22px; height:22px; border-radius:7px 7px 7px 2px; background:var(--gold-tint); color:var(--gold-deep); font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .email-box{font-family:'IBM Plex Mono',monospace; background:var(--blue-tint); color:var(--blue-deep); padding:8px 12px; border-radius:8px; font-size:13px; display:inline-block; font-weight:600;}
+
+  .banner{display:flex; align-items:center; gap:14px; background:var(--success-tint); border:1px solid #C6E2CE; color:var(--success); border-radius:16px 16px 16px 4px; padding:14px 18px; margin-bottom:20px; font-size:13.5px;}
+  .banner .ic-ok{width:24px; height:24px; border-radius:8px 8px 8px 2px; background:var(--success); color:#fff; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0; font-weight:700;}
+  .banner .sheet-link{font-family:'IBM Plex Mono',monospace; font-size:12px; opacity:0.85; word-break:break-all;}
+  .banner .link-ganti{margin-left:auto; font-weight:700; text-decoration:underline; cursor:pointer; flex-shrink:0; background:none; border:none; color:var(--success); font-family:inherit; font-size:12.5px;}
+
+  .next-card{background:var(--gold-tint); border:1px dashed #E9C860; border-radius:18px 18px 18px 4px; padding:20px 22px; font-size:13.5px; color:var(--gold-deep); line-height:1.6;}
+
+  /* ---------- Kelola Peserta ---------- */
+  .tabs{display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap;}
+  .tab-btn{border:1.5px solid var(--line); background:var(--paper); color:var(--ink-soft); font-family:inherit; font-weight:700; font-size:13px; padding:9px 16px; border-radius:100px 100px 100px 4px; cursor:pointer;}
+  .tab-btn.active{background:var(--ink); color:var(--gold); border-color:var(--ink);}
+  .row3{display:grid; grid-template-columns:1fr 1.4fr 1fr; gap:12px; margin-bottom:6px;}
+  .field{margin-bottom:14px;}
+  .field label{display:block; font-size:12.5px; font-weight:700; margin-bottom:6px; color:var(--ink-soft);}
+  .field input, .field select{width:100%; padding:10px 12px; border-radius:10px; border:1.5px solid var(--line); font-family:inherit; font-size:14px; background:var(--paper);}
+  .hint{font-size:12.5px; color:var(--ink-faint); margin:0 0 10px; line-height:1.5;}
+  textarea{width:100%; padding:12px 14px; border-radius:12px; border:1.5px solid var(--line); font-family:'IBM Plex Mono',monospace; font-size:12.5px; background:var(--paper); resize:vertical; margin-bottom:12px;}
+  input[type=file]{font-size:13px; margin-bottom:8px;}
+  .btn{border:none; cursor:pointer; font-family:inherit; font-weight:700; font-size:13.5px; padding:11px 18px; border-radius:100px 100px 100px 4px;}
+  .btn-primary{background:var(--blue); color:#fff;}
+  .btn-primary:disabled{opacity:0.6; cursor:wait;}
+  .btn-outline{background:transparent; border:1.5px solid var(--line); color:var(--ink-soft);}
+  .msg{font-size:12.5px; margin-top:12px; padding:10px 12px; border-radius:10px; display:none;}
+  .msg.error{background:var(--danger-tint); color:var(--danger); display:block;}
+  .msg.success{background:var(--success-tint); color:var(--success); display:block;}
+
+  .preview-table-wrap, .table-wrap{max-height:280px; overflow-y:auto; border:1px solid var(--line); border-radius:12px; margin-bottom:14px;}
+  table{width:100%; border-collapse:collapse; font-size:13px;}
+  th{text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.3px; color:var(--ink-faint); font-family:'IBM Plex Mono',monospace; padding:10px 14px; border-bottom:1px solid var(--line); background:var(--paper); position:sticky; top:0;}
+  td{padding:10px 14px; border-bottom:1px solid var(--line);}
+  tr:last-child td{border-bottom:none;}
+  td.nisn{font-family:'IBM Plex Mono',monospace; color:var(--ink-soft); font-size:12.5px;}
+  td.empty{text-align:center; color:var(--ink-faint); padding:24px;}
+  .row-invalid{background:var(--danger-tint);}
+  .row-invalid td{color:var(--danger);}
+  .pill-status{display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:700; padding:3px 9px; border-radius:100px 100px 100px 3px;}
+  .pill-status.selesai{background:var(--success-tint); color:var(--success);}
+  .pill-status.belum{background:#EEE; color:var(--ink-faint);}
+  .btn-hapus{background:none; border:none; color:var(--danger); cursor:pointer; font-size:16px; padding:2px 6px;}
+
+  /* ---------- Sesi Tes ---------- */
+  .sesi-toggle-row{display:flex; justify-content:space-between; align-items:center; background:var(--paper); border-radius:16px 16px 16px 4px; padding:16px 20px;}
+  .sesi-toggle-label{font-family:'Fraunces',serif; font-size:17px; font-weight:700;}
+  .sesi-toggle-sub{font-size:12px; color:var(--ink-faint); margin-top:2px;}
+  .toggle-switch{position:relative; width:54px; height:30px; border-radius:100px; border:none; cursor:pointer; background:#CCC; flex-shrink:0; transition:.15s;}
+  .toggle-switch::after{content:''; position:absolute; top:3px; left:3px; width:24px; height:24px; background:#fff; border-radius:50%; transition:.15s;}
+  .toggle-switch.on{background:var(--success);}
+  .toggle-switch.on::after{left:27px;}
+  .progress-summary{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:20px;}
+  .progress-item{background:var(--paper); border-radius:12px 12px 12px 3px; padding:14px; text-align:center;}
+  .progress-item .num{font-family:'IBM Plex Mono',monospace; font-size:22px; font-weight:700; color:var(--blue-deep);}
+  .progress-item .lbl{font-size:11px; color:var(--ink-faint); margin-top:2px;}
+  .kelas-badge{display:inline-flex; font-size:11.5px; font-weight:700; padding:4px 10px; border-radius:100px 100px 100px 3px;}
+  .kelas-badge.a{background:var(--blue-tint); color:var(--blue-deep);}
+  .kelas-badge.b{background:var(--gold-tint); color:var(--gold-deep);}
+
+  /* ---------- Insight Ringkasan ---------- */
+  .insight-quote{font-family:'Fraunces',serif; font-style:italic; font-size:16px; line-height:1.6; color:var(--ink); background:var(--blue-tint); border-left:4px solid var(--blue); padding:16px 18px; border-radius:2px 14px 14px 2px; margin-bottom:22px;}
+  .chart-sub{font-family:'Fraunces',serif; font-size:15px; font-weight:700; margin:20px 0 14px;}
+
+  /* Diagram batang vertikal — Literasi & Numerasi (rata-rata, dipakai di legacy) */
+  .bar-chart-vertical{display:flex; gap:28px; align-items:flex-end; height:170px; padding:10px 6px 0;}
+  .vbar-col{display:flex; flex-direction:column; align-items:center; width:70px; height:100%; justify-content:flex-end;}
+  .vbar-value{font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:13.5px; margin-bottom:6px;}
+  .vbar-track{width:48px; height:120px; background:var(--paper); border-radius:10px 10px 4px 4px; display:flex; align-items:flex-end; overflow:hidden;}
+  .vbar-fill{width:100%; border-radius:10px 10px 0 0; transition:height .5s ease;}
+  .vbar-fill.blue{background:var(--blue);}
+  .vbar-fill.gold{background:var(--gold);}
+  .vbar-label{margin-top:8px; font-size:12px; font-weight:600; color:var(--ink-soft);}
+
+  /* Diagram batang horizontal per siswa — Literasi & Numerasi berpasangan */
+  .student-chart-wrap{max-height:360px; overflow-y:auto; padding-right:6px; border:1px solid var(--line); border-radius:12px; padding:14px 14px 4px;}
+  .student-row{margin-bottom:14px;}
+  .student-name{font-size:12.5px; font-weight:700; margin-bottom:5px; color:var(--ink);}
+  .subbar-row{display:flex; align-items:center; gap:8px; margin-bottom:4px;}
+  .subbar-tag{width:64px; font-size:10.5px; font-weight:700; color:var(--ink-faint); flex-shrink:0; text-transform:uppercase; letter-spacing:0.3px;}
+  .subbar-track{flex:1; height:16px; background:var(--paper); border-radius:5px; overflow:hidden;}
+  .subbar-fill{height:100%; border-radius:5px; transition:width .4s ease;}
+  .subbar-fill.blue{background:var(--blue);}
+  .subbar-fill.gold{background:var(--gold);}
+  .subbar-score{width:28px; text-align:left; font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:700; color:var(--ink); flex-shrink:0;}
+
+  /* Diagram lingkaran — Gaya Belajar */
+  .pie-wrap{display:flex; align-items:center; gap:30px; margin-top:6px; flex-wrap:wrap;}
+  .pie-chart{width:130px; height:130px; border-radius:50%; flex-shrink:0; transition:background .4s ease;}
+  .pie-legend{display:flex; flex-direction:column; gap:10px;}
+  .legend-item{display:flex; align-items:center; gap:9px; font-size:13px; font-weight:600; color:var(--ink-soft); min-width:170px;}
+  .legend-item b{margin-left:auto; font-family:'IBM Plex Mono',monospace; color:var(--ink); font-size:13px;}
+  .legend-dot{width:11px; height:11px; border-radius:50%; display:inline-block; flex-shrink:0;}
+  .legend-dot.blue{background:var(--blue);}
+  .legend-dot.gold{background:var(--gold);}
+  .legend-dot.ink{background:var(--ink);}
+  .legend-dot.orange{background:rgb(230,126,34);}
+</style>
+</head>
+<body>
+
+<!-- ===================== LAYAR LOGIN ===================== -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="login-mark">¶</div>
+    <h1>Masuk Proktor</h1>
+    <p>Masukkan kode akses yang diberikan oleh Admin Pusat ALINEA untuk sekolah Bapak/Ibu.</p>
+    <div class="field">
+      <label>Kode Akses</label>
+      <input id="inpKode" placeholder="cth. SMP-MN01" maxlength="10">
+    </div>
+    <button class="btn btn-primary" id="btnLogin" onclick="submitLogin()">Masuk</button>
+    <div class="msg" id="loginMsg"></div>
+  </div>
+</div>
+
+<!-- ===================== LAYAR DASHBOARD ===================== -->
+<div class="app" id="appScreen">
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="mark">¶</div>
+        <div class="brand-name">ALINEA</div>
+      </div>
+      <div class="school-badge">
+        <p class="nama" id="badgeSekolah">—</p>
+        <p class="meta" id="badgeMeta">—</p>
+      </div>
+      <nav class="sidenav">
+        <button class="nav-btn active" data-section="ringkasan" onclick="pindahSection('ringkasan')">◧ Ringkasan</button>
+        <button class="nav-btn" data-section="sheet" onclick="pindahSection('sheet')">⛁ Pengaturan Sheet</button>
+        <button class="nav-btn locked" data-section="peserta" onclick="pindahSection('peserta')">👤 Data Peserta</button>
+        <button class="nav-btn locked" data-section="soal" onclick="pindahSection('soal')">▤ Bank Soal</button>
+        <button class="nav-btn locked" data-section="sesi" onclick="pindahSection('sesi')">◷ Sesi Tes</button>
+        <button class="nav-btn locked" data-section="hasil" onclick="pindahSection('hasil')">◫ Hasil &amp; Kelas</button>
+      </nav>
+      <div class="sidebar-foot">
+        <button class="logout" onclick="logout()">← Keluar</button>
+      </div>
+    </aside>
+
+    <main class="content">
+
+      <!-- ===== RINGKASAN ===== -->
+      <section class="section active" id="section-ringkasan">
+        <h1 class="page-title">Ringkasan</h1>
+        <div class="banner" id="bannerTerhubung" style="display:none;">
+          <div class="ic-ok">✓</div>
+          <div>Sheet terhubung — <span class="sheet-link" id="linkTerhubung"></span></div>
+          <button class="link-ganti" onclick="pindahSection('sheet')">Kelola Sheet</button>
+        </div>
+        <div class="card" id="cardAjakHubung">
+          <h2>Mulai dengan menghubungkan Sheet</h2>
+          <p class="desc">Sebelum bisa kelola peserta, bank soal, dan sesi tes, hubungkan dulu Google Sheet sekolah Anda.</p>
+          <button class="btn btn-primary" style="width:auto;" onclick="pindahSection('sheet')">Ke Pengaturan Sheet →</button>
+        </div>
+        <div class="progress-summary" id="progressSummary"></div>
+
+        <div class="card" id="cardInsight" style="display:none; margin-top:20px;">
+          <div class="insight-quote" id="ringkasanTeks">Memuat ringkasan...</div>
+
+          <div class="chart-sub">Skor Literasi &amp; Numerasi per Peserta</div>
+          <div class="student-chart-wrap" id="studentChartWrap"></div>
+
+          <div class="chart-sub">Sebaran Gaya Belajar</div>
+          <div class="pie-wrap">
+            <div class="pie-chart" id="pieGaya" style="background:var(--line);"></div>
+            <div class="pie-legend">
+              <div class="legend-item"><span class="legend-dot blue"></span>Visual <b id="pctVisual">0%</b></div>
+              <div class="legend-item"><span class="legend-dot gold"></span>Auditori <b id="pctAuditori">0%</b></div>
+              <div class="legend-item"><span class="legend-dot orange"></span>Kinestetik <b id="pctKinestetik">0%</b></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== PENGATURAN SHEET ===== -->
+      <section class="section" id="section-sheet">
+        <h1 class="page-title">Pengaturan Sheet</h1>
+        <div class="card" id="cardBelumHubung">
+          <h2>Hubungkan Google Sheet Sekolah</h2>
+          <p class="desc">Sheet ini akan jadi tempat semua data peserta, soal, dan hasil tes tersimpan — khusus milik sekolah Bapak/Ibu sendiri.</p>
+          <ul class="steps">
+            <li><span class="num">1</span> Buat 1 Google Spreadsheet baru, boleh dikosongkan begitu saja.</li>
+            <li><span class="num">2</span> Klik tombol <b>Share</b> di kanan atas Spreadsheet tersebut.</li>
+            <li><span class="num">3</span> Tambahkan email berikut sebagai <b>Editor</b>:<br><span class="email-box" id="emailSistem">GANTI_DENGAN_EMAIL_AKUN_ANDA@gmail.com</span></li>
+            <li><span class="num">4</span> Salin link Spreadsheet, tempel di kolom bawah ini.</li>
+          </ul>
+          <div class="field">
+            <label>Link Google Sheet</label>
+            <input id="inpLinkSheet" placeholder="https://docs.google.com/spreadsheets/d/..." style="text-transform:none; letter-spacing:0;">
+          </div>
+          <button class="btn btn-primary" id="btnHubung" onclick="submitHubungkanSheet()">Hubungkan Sheet</button>
+          <div class="msg" id="hubungMsg"></div>
+        </div>
+      </section>
+
+      <!-- ===== DATA PESERTA ===== -->
+      <section class="section" id="section-peserta">
+        <h1 class="page-title">Data Peserta</h1>
+        <div class="card">
+          <p class="desc">Tambahkan peserta satu per satu, tempel dari Excel, atau unggah file langsung.</p>
+
+          <div class="tabs">
+            <button class="tab-btn active" data-tab="manual" onclick="gantiTab('manual')">Manual</button>
+            <button class="tab-btn" data-tab="tempel" onclick="gantiTab('tempel')">Tempel dari Excel</button>
+            <button class="tab-btn" data-tab="upload" onclick="gantiTab('upload')">Upload File</button>
+          </div>
+
+          <div class="tab-panel" id="panelManual">
+            <div class="row3">
+              <div class="field"><label>NISN</label><input id="mNisn" placeholder="0091238471"></div>
+              <div class="field"><label>Nama Lengkap</label><input id="mNama" placeholder="Nama siswa"></div>
+              <div class="field"><label>Jenis Kelamin</label>
+                <select id="mGender"><option value="L">Laki-laki</option><option value="P">Perempuan</option></select>
+              </div>
+            </div>
+            <button class="btn btn-primary" id="btnTambahManual" onclick="submitTambahManual()">Tambah Peserta</button>
+            <div class="msg" id="manualMsg"></div>
+          </div>
+
+          <div class="tab-panel" id="panelTempel" style="display:none;">
+            <p class="hint">Format tiap baris: <b>NISN [Tab] Nama [Tab] L/P</b> — bisa langsung disalin dari kolom Excel.</p>
+            <textarea id="tArea" rows="6" placeholder="0091238471&#9;Amelia Putri Rahman&#9;P&#10;0091238455&#9;Muhammad Fajar Ode&#9;L"></textarea>
+            <button class="btn btn-outline" onclick="pratinjauTempel()">Pratinjau</button>
+          </div>
+
+          <div class="tab-panel" id="panelUpload" style="display:none;">
+            <p class="hint">Unggah file .xlsx atau .csv dengan urutan kolom: NISN, Nama, Jenis Kelamin (L/P).</p>
+            <button class="btn btn-outline" style="margin-bottom:14px;" onclick="unduhTemplate()">⬇ Unduh Template Excel</button>
+            <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" onchange="prosesFile(event)">
+          </div>
+
+          <div id="previewBox" style="display:none;">
+            <p class="hint" id="previewSummary"></p>
+            <div class="preview-table-wrap"><table id="previewTable"></table></div>
+            <button class="btn btn-primary" id="btnImport" onclick="submitImportBulk()">Import Peserta</button>
+            <div class="msg" id="importMsg"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Daftar Peserta <span id="jumlahPeserta" style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--ink-faint); font-weight:400;"></span></h2>
+          <div class="table-wrap"><table id="tabelPeserta">
+            <thead><tr><th>NISN</th><th>Nama</th><th>JK</th><th>Status</th><th></th></tr></thead>
+            <tbody id="bodyPeserta"><tr><td colspan="5" class="empty">Memuat data...</td></tr></tbody>
+          </table></div>
+        </div>
+      </section>
+
+      <!-- ===== BANK SOAL ===== -->
+      <section class="section" id="section-soal">
+        <h1 class="page-title">Bank Soal</h1>
+        <div class="card">
+          <p class="desc">Isi soal Literasi-Numerasi dan pernyataan Gaya Belajar. Bisa mulai dari starter set AKM, lalu ditambah atau diedit sendiri.</p>
+          <button class="btn btn-outline" id="btnStarter" onclick="submitStarterSet()">✨ Isi dengan Starter Set AKM</button>
+          <div class="msg" id="starterMsg"></div>
+
+          <div class="tabs" style="margin-top:22px;">
+            <button class="tab-btn active" data-jsoal="ln" onclick="gantiJenisSoal('ln')">Literasi &amp; Numerasi</button>
+            <button class="tab-btn" data-jsoal="gaya" onclick="gantiJenisSoal('gaya')">Gaya Belajar</button>
+          </div>
+
+          <div id="panelLN">
+            <div class="tabs">
+              <button class="tab-btn active" data-sub="manual" onclick="gantiSubTab('LN','manual')">Manual</button>
+              <button class="tab-btn" data-sub="upload" onclick="gantiSubTab('LN','upload')">Upload File</button>
+            </div>
+
+            <div class="tab-panel" id="LN-manual">
+              <div class="field"><label>Kategori</label>
+                <select id="sKategori"><option value="Literasi">Literasi</option><option value="Numerasi">Numerasi</option></select>
+              </div>
+              <div class="field"><label>Pertanyaan</label><textarea id="sPertanyaan" rows="2" placeholder="Tulis pertanyaan di sini..."></textarea></div>
+              <div class="field"><label>Petikan / Teks Bacaan (opsional)</label><textarea id="sPetikan" rows="2" placeholder="Kosongkan kalau soal tidak butuh kutipan teks"></textarea></div>
+              <div class="row3">
+                <div class="field"><label>Pilihan A</label><input id="sA"></div>
+                <div class="field"><label>Pilihan B</label><input id="sB"></div>
+                <div class="field"><label>Pilihan C</label><input id="sC"></div>
+              </div>
+              <div class="row3">
+                <div class="field"><label>Pilihan D</label><input id="sD"></div>
+                <div class="field"><label>Kunci Jawaban</label>
+                  <select id="sKunci"><option>A</option><option>B</option><option>C</option><option>D</option></select>
+                </div>
+                <div class="field"><label>Level Kesulitan</label>
+                  <select id="sLevel"><option>Mudah</option><option selected>Sedang</option><option>Sulit</option></select>
+                </div>
+              </div>
+              <button class="btn btn-primary" id="btnTambahSoal" onclick="submitTambahSoal()">Tambah Soal</button>
+              <div class="msg" id="soalMsg"></div>
+            </div>
+
+            <div class="tab-panel" id="LN-upload" style="display:none;">
+              <p class="hint">Unduh dulu templatenya, isi di Excel, lalu unggah kembali di sini.</p>
+              <button class="btn btn-outline" onclick="unduhTemplateLN()">⬇ Unduh Template Soal (.xlsx)</button>
+              <div style="height:12px;"></div>
+              <input type="file" id="fileSoalLN" accept=".xlsx,.xls,.csv" onchange="prosesFileSoal(event,'ln')">
+            </div>
+
+            <div id="previewLN" style="display:none;">
+              <p class="hint" id="previewLNSummary"></p>
+              <div class="preview-table-wrap"><table id="previewLNTable"></table></div>
+              <button class="btn btn-primary" onclick="submitImportSoal('ln')">Import Soal</button>
+              <div class="msg" id="importLNMsg"></div>
+            </div>
+
+            <div class="table-wrap" style="margin-top:18px;"><table id="tabelLN">
+              <thead><tr><th>ID</th><th>Kategori</th><th>Pertanyaan</th><th>Kunci</th><th>Level</th><th></th></tr></thead>
+              <tbody id="bodyLN"><tr><td colspan="6" class="empty">Belum ada soal.</td></tr></tbody>
+            </table></div>
+          </div>
+
+          <div id="panelGaya" style="display:none;">
+            <div class="tabs">
+              <button class="tab-btn active" data-sub="manual" onclick="gantiSubTab('Gaya','manual')">Manual</button>
+              <button class="tab-btn" data-sub="upload" onclick="gantiSubTab('Gaya','upload')">Upload File</button>
+            </div>
+
+            <div class="tab-panel" id="Gaya-manual">
+              <div class="field"><label>Pernyataan</label><textarea id="gPernyataan" rows="2" placeholder="cth. Saya lebih mudah paham lewat gambar dan diagram."></textarea></div>
+              <div class="field"><label>Tipe Gaya Belajar</label>
+                <select id="gTipe"><option>Visual</option><option>Auditori</option><option>Kinestetik</option></select>
+              </div>
+              <button class="btn btn-primary" id="btnTambahGaya" onclick="submitTambahGaya()">Tambah Pernyataan</button>
+              <div class="msg" id="gayaMsg"></div>
+            </div>
+
+            <div class="tab-panel" id="Gaya-upload" style="display:none;">
+              <p class="hint">Unduh dulu templatenya, isi di Excel, lalu unggah kembali di sini.</p>
+              <button class="btn btn-outline" onclick="unduhTemplateGaya()">⬇ Unduh Template Gaya Belajar (.xlsx)</button>
+              <div style="height:12px;"></div>
+              <input type="file" id="fileSoalGaya" accept=".xlsx,.xls,.csv" onchange="prosesFileSoal(event,'gaya')">
+            </div>
+
+            <div id="previewGaya" style="display:none;">
+              <p class="hint" id="previewGayaSummary"></p>
+              <div class="preview-table-wrap"><table id="previewGayaTable"></table></div>
+              <button class="btn btn-primary" onclick="submitImportSoal('gaya')">Import Pernyataan</button>
+              <div class="msg" id="importGayaMsg"></div>
+            </div>
+
+            <div class="table-wrap" style="margin-top:18px;"><table id="tabelGaya">
+              <thead><tr><th>ID</th><th>Pernyataan</th><th>Tipe</th><th></th></tr></thead>
+              <tbody id="bodyGaya"><tr><td colspan="4" class="empty">Belum ada pernyataan.</td></tr></tbody>
+            </table></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== SESI TES ===== -->
+      <section class="section" id="section-sesi">
+        <h1 class="page-title">Sesi Tes</h1>
+        <div class="card">
+          <p class="desc" style="margin-bottom:16px;">Atur durasi pengerjaan dan jumlah soal yang diacak, lalu buka sesi saat siswa siap mengerjakan.</p>
+
+          <div class="sesi-toggle-row">
+            <div>
+              <div class="sesi-toggle-label" id="sesiLabel">Memuat status...</div>
+              <div class="sesi-toggle-sub">Status sesi tes saat ini</div>
+            </div>
+            <button class="toggle-switch" id="toggleSesi" onclick="submitToggleSesi()"></button>
+          </div>
+
+          <div class="row3" style="margin-top:20px;">
+            <div class="field"><label>Durasi Pengerjaan (menit)</label><input type="number" id="pDurasi" min="5" max="180"></div>
+            <div class="field"><label>Jumlah Soal Literasi</label><input type="number" id="pJumlahL" min="1" max="50"></div>
+            <div class="field"><label>Jumlah Soal Numerasi</label><input type="number" id="pJumlahN" min="1" max="50"></div>
+          </div>
+          <button class="btn btn-primary" id="btnSimpanSesi" onclick="submitPengaturanSesi()">Simpan Pengaturan</button>
+          <div class="msg" id="sesiMsg"></div>
+        </div>
+      </section>
+
+      <!-- ===== HASIL & PEMBAGIAN KELAS ===== -->
+      <section class="section" id="section-hasil">
+        <h1 class="page-title">Hasil &amp; Pembagian Kelas</h1>
+        <div class="card">
+          <p class="desc">Rekap skor semua peserta yang sudah tes, lalu bagi kelas otomatis dengan pola zigzag per jenis kelamin (2 kelas, kemampuan merata).</p>
+          <button class="btn btn-outline" onclick="submitBagiKelas()">🔀 Bagi Kelas Sekarang</button>
+          <button class="btn btn-outline" onclick="unduhPembagianKelas()" style="margin-left:8px;">⬇ Unduh Pembagian Kelas (.xlsx)</button>
+          <div class="msg" id="kelasMsg"></div>
+
+          <h3 style="font-family:'Fraunces',serif; font-size:15px; margin:22px 0 10px;">Rekap Hasil Peserta</h3>
+          <div class="table-wrap"><table id="tabelHasil">
+            <thead><tr><th>NISN</th><th>Nama</th><th>JK</th><th>Literasi</th><th>Numerasi</th><th>Gaya Dominan</th></tr></thead>
+            <tbody id="bodyHasil"><tr><td colspan="6" class="empty">Belum ada hasil tes.</td></tr></tbody>
+          </table></div>
+
+          <h3 style="font-family:'Fraunces',serif; font-size:15px; margin:22px 0 10px;">Pembagian Kelas</h3>
+          <div class="table-wrap"><table id="tabelKelas">
+            <thead><tr><th>NISN</th><th>Nama</th><th>JK</th><th>Skor Total</th><th>Kelas</th></tr></thead>
+            <tbody id="bodyKelas"><tr><td colspan="5" class="empty">Belum dibagi. Klik "Bagi Kelas Sekarang".</td></tr></tbody>
+          </table></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<script>
+  // ==========================================================
+  // GANTI URL INI dengan URL Web App yang sama dipakai di Admin
+  // ==========================================================
+  const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzavUXVeEDNf_65an-rb37OEzV03nF_MtzrzBe1sVBFL3lpFR6UxbhpHFoU7d9cT_TSuw/exec';
+
+  // GANTI dengan email akun Google yang dipakai untuk Deploy Code.gs
+  const EMAIL_SISTEM = 'smplpmmano@gmail.com';
+  document.getElementById('emailSistem').textContent = EMAIL_SISTEM;
+
+  let dataProktorAktif = null;
+
+  // ---- Helper JSONP ----
+  function callGAS(action, params) {
+    return new Promise((resolve, reject) => {
+      const callbackName = 'cb_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
+      window[callbackName] = (data) => {
+        resolve(data);
+        delete window[callbackName];
+        script.remove();
+      };
+      const query = new URLSearchParams({ action, callback: callbackName, ...params });
+      const script = document.createElement('script');
+      script.src = WEB_APP_URL + '?' + query.toString();
+      script.onerror = () => { reject(new Error('Gagal terhubung ke server.')); script.remove(); };
+      document.body.appendChild(script);
+    });
+  }
+
+  // ---- Cek apakah sudah login sebelumnya (sessionStorage) ----
+  window.addEventListener('DOMContentLoaded', () => {
+    const kodeTersimpan = sessionStorage.getItem('alinea_kode_proktor');
+    if (kodeTersimpan) {
+      masuk(kodeTersimpan);
+    }
+  });
+
+  async function submitLogin() {
+    const kode = document.getElementById('inpKode').value.trim().toUpperCase();
+    const msgEl = document.getElementById('loginMsg');
+    const btn = document.getElementById('btnLogin');
+
+    if (!kode) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = 'Kode akses wajib diisi.';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Memeriksa...';
+    msgEl.className = 'msg';
+
+    try {
+      await masuk(kode);
+    } catch (err) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = 'Gagal terhubung ke server.';
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Masuk';
+  }
+
+  async function masuk(kode) {
+    const res = await callGAS('getStatusProktor', { kode });
+    const msgEl = document.getElementById('loginMsg');
+
+    if (!res.success) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = res.message;
+      sessionStorage.removeItem('alinea_kode_proktor');
+      return;
+    }
+
+    if (res.data.status === 'Nonaktif') {
+      msgEl.className = 'msg error';
+      msgEl.textContent = 'Kode akses ini sudah dinonaktifkan oleh Admin.';
+      sessionStorage.removeItem('alinea_kode_proktor');
+      return;
+    }
+
+    dataProktorAktif = res.data;
+    sessionStorage.setItem('alinea_kode_proktor', kode);
+    tampilkanDashboard();
+  }
+
+  function tampilkanDashboard() {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('appScreen').style.display = 'block';
+
+    document.getElementById('badgeSekolah').textContent = dataProktorAktif.nama_sekolah;
+    document.getElementById('badgeMeta').textContent =
+      'Kode: ' + dataProktorAktif.kode_proktor + ' · Jenjang ' + dataProktorAktif.jenjang;
+
+    const sudahTerhubung = dataProktorAktif.status === 'Aktif' && dataProktorAktif.link_sheet_proktor;
+
+    document.getElementById('bannerTerhubung').style.display = sudahTerhubung ? 'flex' : 'none';
+    document.getElementById('cardAjakHubung').style.display = sudahTerhubung ? 'none' : 'block';
+    if (sudahTerhubung) document.getElementById('linkTerhubung').textContent = dataProktorAktif.link_sheet_proktor;
+
+    // Kunci/buka menu sidebar sesuai status koneksi Sheet
+    document.querySelectorAll('.sidenav button').forEach(btn => {
+      const nama = btn.dataset.section;
+      if (nama === 'ringkasan' || nama === 'sheet') { btn.classList.remove('locked'); return; }
+      btn.classList.toggle('locked', !sudahTerhubung);
+    });
+
+    pindahSection(sudahTerhubung ? 'ringkasan' : 'sheet');
+
+    if (sudahTerhubung) {
+      muatPengaturanSesi();
+      muatBankSoal();
+      (async () => {
+        await muatDaftarPeserta();
+        await muatHasilDanKelas();
+        renderInsightRingkasan();
+      })();
+    }
+  }
+
+  function renderInsightRingkasan() {
+    const cardInsight = document.getElementById('cardInsight');
+    const totalPeserta = dataPesertaCache.length;
+    const totalSelesai = dataHasilCache.length;
+
+    if (totalPeserta === 0) { cardInsight.style.display = 'none'; return; }
+    cardInsight.style.display = 'block';
+
+    let teks;
+    if (totalSelesai === 0) {
+      teks = 'Belum ada peserta yang menyelesaikan tes. Buka sesi di menu "Sesi Tes" lalu ajak siswa mulai mengerjakan.';
+    } else {
+      const avgLiterasi = Math.round(dataHasilCache.reduce((s, h) => s + Number(h.skor_literasi), 0) / totalSelesai);
+      const avgNumerasi = Math.round(dataHasilCache.reduce((s, h) => s + Number(h.skor_numerasi), 0) / totalSelesai);
+
+      const hitungGaya = { Visual: 0, Auditori: 0, Kinestetik: 0 };
+      dataHasilCache.forEach(h => { if (hitungGaya[h.gaya_dominan] !== undefined) hitungGaya[h.gaya_dominan]++; });
+      const gayaTerbanyak = Object.keys(hitungGaya).reduce((a, b) => hitungGaya[a] >= hitungGaya[b] ? a : b);
+
+      if (totalSelesai < totalPeserta) {
+        teks = `${totalSelesai} dari ${totalPeserta} peserta sudah menyelesaikan tes. Sejauh ini rata-rata Literasi ${avgLiterasi} dan Numerasi ${avgNumerasi}, dengan gaya belajar ${gayaTerbanyak.toLowerCase()} paling banyak ditemukan.`;
+      } else {
+        teks = `Semua ${totalPeserta} peserta sudah menyelesaikan tes. Rata-rata Literasi ${avgLiterasi} dan Numerasi ${avgNumerasi} — gaya belajar ${gayaTerbanyak.toLowerCase()} paling dominan di angkatan ini.`;
+      }
+
+      document.getElementById('studentChartWrap').innerHTML = dataHasilCache.map(h => `
+        <div class="student-row">
+          <div class="student-name">${h.nama}</div>
+          <div class="subbar-row">
+            <span class="subbar-tag">Literasi</span>
+            <div class="subbar-track"><div class="subbar-fill blue" style="width:${h.skor_literasi}%;"></div></div>
+            <span class="subbar-score">${h.skor_literasi}</span>
+          </div>
+          <div class="subbar-row">
+            <span class="subbar-tag">Numerasi</span>
+            <div class="subbar-track"><div class="subbar-fill gold" style="width:${h.skor_numerasi}%;"></div></div>
+            <span class="subbar-score">${h.skor_numerasi}</span>
+          </div>
+        </div>`).join('');
+
+      const pctVisual = totalSelesai > 0 ? Math.round((hitungGaya.Visual / totalSelesai) * 100) : 0;
+      const pctAuditori = totalSelesai > 0 ? Math.round((hitungGaya.Auditori / totalSelesai) * 100) : 0;
+      const pctKinestetik = Math.max(0, 100 - pctVisual - pctAuditori); // sisa, supaya total pasti 100%
+
+      document.getElementById('pctVisual').textContent = pctVisual + '%';
+      document.getElementById('pctAuditori').textContent = pctAuditori + '%';
+      document.getElementById('pctKinestetik').textContent = pctKinestetik + '%';
+
+      const batas1 = pctVisual;
+      const batas2 = pctVisual + pctAuditori;
+      document.getElementById('pieGaya').style.background =
+        `conic-gradient(rgb(29,111,168) 0% ${batas1}%, rgb(251,210,6) ${batas1}% ${batas2}%, rgb(230,126,34) ${batas2}% 100%)`;
+    }
+
+    document.getElementById('ringkasanTeks').textContent = teks;
+  }
+
+  function pindahSection(nama) {
+    const btn = document.querySelector(`.sidenav button[data-section="${nama}"]`);
+    if (btn && btn.classList.contains('locked')) {
+      alert('Hubungkan Sheet sekolah dulu di menu "Pengaturan Sheet".');
+      return;
+    }
+    document.querySelectorAll('.sidenav button').forEach(b => b.classList.toggle('active', b.dataset.section === nama));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    const target = document.getElementById('section-' + nama);
+    if (target) target.classList.add('active');
+  }
+
+  // ================= SESI TES =================
+
+  let statusSesiSaatIni = 'Ditutup';
+
+  async function muatPengaturanSesi() {
+    try {
+      const res = await callGAS('getPengaturanSesi', { kode: dataProktorAktif.kode_proktor });
+      if (res.success) {
+        statusSesiSaatIni = res.data.status_sesi || 'Ditutup';
+        renderToggleSesi();
+        document.getElementById('pDurasi').value = res.data.durasi_menit || 45;
+        document.getElementById('pJumlahL').value = res.data.jumlah_soal_literasi || 5;
+        document.getElementById('pJumlahN').value = res.data.jumlah_soal_numerasi || 5;
+      }
+    } catch (err) {
+      document.getElementById('sesiLabel').textContent = 'Gagal memuat status sesi';
+    }
+  }
+
+  function renderToggleSesi() {
+    const dibuka = statusSesiSaatIni === 'Dibuka';
+    document.getElementById('sesiLabel').textContent = dibuka ? 'Sesi Sedang Dibuka' : 'Sesi Ditutup';
+    document.getElementById('toggleSesi').classList.toggle('on', dibuka);
+  }
+
+  async function submitToggleSesi() {
+    const statusBaru = statusSesiSaatIni === 'Dibuka' ? 'Ditutup' : 'Dibuka';
+    const toggle = document.getElementById('toggleSesi');
+    toggle.disabled = true;
+    try {
+      const res = await callGAS('toggleSesiTes', { kode: dataProktorAktif.kode_proktor, status: statusBaru });
+      if (res.success) {
+        statusSesiSaatIni = statusBaru;
+        renderToggleSesi();
+      }
+    } catch (err) { /* diamkan */ }
+    toggle.disabled = false;
+  }
+
+  async function submitPengaturanSesi() {
+    const durasiMenit = document.getElementById('pDurasi').value;
+    const jumlahLiterasi = document.getElementById('pJumlahL').value;
+    const jumlahNumerasi = document.getElementById('pJumlahN').value;
+    const msgEl = document.getElementById('sesiMsg');
+    const btn = document.getElementById('btnSimpanSesi');
+
+    btn.disabled = true; btn.textContent = 'Menyimpan...';
+    try {
+      const res = await callGAS('simpanPengaturanSesi', {
+        kode: dataProktorAktif.kode_proktor, durasiMenit, jumlahLiterasi, jumlahNumerasi
+      });
+      msgEl.className = res.success ? 'msg success' : 'msg error';
+      msgEl.textContent = res.message;
+    } catch (err) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = 'Gagal terhubung ke server.';
+    }
+    btn.disabled = false; btn.textContent = 'Simpan Pengaturan';
+  }
+
+  function renderProgressSummary() {
+    const total = dataPesertaCache.length;
+    const selesai = dataPesertaCache.filter(p => p.sudah_mengerjakan === true || p.sudah_mengerjakan === 'TRUE').length;
+    const sedang = dataPesertaCache.filter(p => {
+      const belumSelesai = !(p.sudah_mengerjakan === true || p.sudah_mengerjakan === 'TRUE');
+      return belumSelesai && p.waktu_mulai;
+    }).length;
+    const belum = total - selesai - sedang;
+
+    document.getElementById('progressSummary').innerHTML = `
+      <div class="progress-item"><div class="num">${total}</div><div class="lbl">TERDAFTAR</div></div>
+      <div class="progress-item"><div class="num">${selesai}</div><div class="lbl">SELESAI</div></div>
+      <div class="progress-item"><div class="num">${sedang}</div><div class="lbl">SEDANG TES</div></div>
+      <div class="progress-item"><div class="num">${belum}</div><div class="lbl">BELUM MULAI</div></div>`;
+  }
+
+  // ================= KELOLA PESERTA =================
+
+  let dataPesertaCache = [];
+  let hasilParsing = [];
+
+  function gantiTab(nama) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === nama));
+    document.getElementById('panelManual').style.display = nama === 'manual' ? 'block' : 'none';
+    document.getElementById('panelTempel').style.display = nama === 'tempel' ? 'block' : 'none';
+    document.getElementById('panelUpload').style.display = nama === 'upload' ? 'block' : 'none';
+    document.getElementById('previewBox').style.display = 'none';
+  }
+
+  // ---- Tambah manual (satu peserta) ----
+  async function submitTambahManual() {
+    const nisn = document.getElementById('mNisn').value.trim();
+    const nama = document.getElementById('mNama').value.trim();
+    const jenisKelamin = document.getElementById('mGender').value;
+    const msgEl = document.getElementById('manualMsg');
+    const btn = document.getElementById('btnTambahManual');
+
+    if (!nisn || !nama) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = 'NISN dan nama wajib diisi.';
+      return;
+    }
+
+    btn.disabled = true; btn.textContent = 'Menyimpan...';
+    try {
+      const res = await callGAS('tambahPeserta', { kode: dataProktorAktif.kode_proktor, nisn, nama, jenisKelamin });
+      msgEl.className = res.success ? 'msg success' : 'msg error';
+      msgEl.textContent = res.message;
+      if (res.success) {
+        document.getElementById('mNisn').value = '';
+        document.getElementById('mNama').value = '';
+        muatDaftarPeserta();
+      }
+    } catch (err) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = 'Gagal terhubung ke server.';
+    }
+    btn.disabled = false; btn.textContent = 'Tambah Peserta';
+  }
+
+  // ---- Parsing baris teks (dipakai oleh Tempel & Upload) ----
+  function parseBarisTeks(teks) {
+    const baris = teks.split('\n').map(b => b.trim()).filter(b => b.length > 0);
+    return baris.map(b => {
+      const kolom = b.includes('\t') ? b.split('\t') : b.split(',');
+      return {
+        nisn: (kolom[0] || '').trim(),
+        nama: (kolom[1] || '').trim(),
+        jenisKelamin: (kolom[2] || '').trim().toUpperCase().startsWith('P') ? 'P' : 'L'
+      };
+    });
+  }
+
+  function pratinjauTempel() {
+    const teks = document.getElementById('tArea').value;
+    if (!teks.trim()) return;
+    hasilParsing = parseBarisTeks(teks);
+    tampilkanPreview();
+  }
+
+  // ---- Unduh template Excel kosong untuk diisi proktor ----
+  function unduhTemplate() {
+    const data = [
+      ['NISN', 'Nama', 'Jenis Kelamin'],
+      ['0091238471', 'Amelia Putri Rahman', 'P'],
+      ['0091238455', 'Muhammad Fajar Ode', 'L']
+    ];
+    const ws = XLSX.utils.aoa_to_sheet(data);
+    ws['!cols'] = [{ wch: 16 }, { wch: 28 }, { wch: 14 }];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Peserta');
+    XLSX.writeFile(wb, 'Template_Peserta_ALINEA.xlsx');
+  }
+
+  // ---- Upload file Excel/CSV (parse pakai SheetJS) ----
+  function prosesFile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const sheetPertama = workbook.Sheets[workbook.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(sheetPertama, { header: 1 });
+
+      // Lewati baris pertama kalau sepertinya header (kolom pertama bukan angka)
+      const mulaiDari = (rows[0] && /^\d+$/.test(String(rows[0][0]).trim())) ? 0 : 1;
+
+      hasilParsing = rows.slice(mulaiDari)
+        .filter(r => r && r[0])
+        .map(r => ({
+          nisn: String(r[0] || '').trim(),
+          nama: String(r[1] || '').trim(),
+          jenisKelamin: String(r[2] || '').trim().toUpperCase().startsWith('P') ? 'P' : 'L'
+        }));
+
+      tampilkanPreview();
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  // ---- Tampilkan pratinjau sebelum import ----
+  function tampilkanPreview() {
+    const validRows = hasilParsing.filter(p => p.nisn && p.nama);
+    const invalidCount = hasilParsing.length - validRows.length;
+
+    document.getElementById('previewSummary').textContent =
+      `${validRows.length} peserta siap diimport` + (invalidCount > 0 ? `, ${invalidCount} baris dilewati (NISN/nama kosong).` : '.');
+
+    const table = document.getElementById('previewTable');
+    table.innerHTML = `<thead><tr><th>NISN</th><th>Nama</th><th>JK</th></tr></thead><tbody>` +
+      hasilParsing.map(p => {
+        const invalid = !p.nisn || !p.nama;
+        return `<tr class="${invalid ? 'row-invalid' : ''}">
+          <td class="nisn">${p.nisn || '(kosong)'}</td>
+          <td>${p.nama || '(kosong)'}</td>
+          <td>${p.jenisKelamin}</td>
+        </tr>`;
+      }).join('') + '</tbody>';
+
+    document.getElementById('previewBox').style.display = 'block';
+  }
+
+  // ---- Kirim hasil parsing ke server (pakai POST, bukan JSONP) ----
+  async function submitImportBulk() {
+    const validRows = hasilParsing.filter(p => p.nisn && p.nama);
+    const btn = document.getElementById('btnImport');
+    const msgEl = document.getElementById('importMsg');
+
+    if (validRows.length === 0) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = 'Tidak ada baris valid untuk diimport.';
+      return;
+    }
+
+    btn.disabled = true; btn.textContent = 'Mengimpor...';
+
+    try {
+      const res = await fetch(WEB_APP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'importPesertaBulk', kode: dataProktorAktif.kode_proktor, daftar: validRows })
+      });
+      const data = await res.json();
+      msgEl.className = data.success ? 'msg success' : 'msg error';
+      msgEl.textContent = data.message;
+      if (data.success) {
+        document.getElementById('previewBox').style.display = 'none';
+        document.getElementById('tArea').value = '';
+        document.getElementById('fileInput').value = '';
+        muatDaftarPeserta();
+      }
+    } catch (err) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = 'Gagal terhubung ke server.';
+    }
+
+    btn.disabled = false; btn.textContent = 'Import Peserta';
+  }
+
+  // ---- Muat & render tabel daftar peserta ----
+  async function muatDaftarPeserta() {
+    try {
+      const res = await callGAS('getDaftarPeserta', { kode: dataProktorAktif.kode_proktor });
+      if (res.success) {
+        dataPesertaCache = res.data;
+        renderTabelPeserta();
+        renderProgressSummary();
+      }
+    } catch (err) {
+      document.getElementById('bodyPeserta').innerHTML = '<tr><td colspan="5" class="empty">Gagal memuat data peserta.</td></tr>';
+    }
+  }
+
+  function renderTabelPeserta() {
+    document.getElementById('jumlahPeserta').textContent = `(${dataPesertaCache.length} peserta)`;
+    const tbody = document.getElementById('bodyPeserta');
+
+    if (dataPesertaCache.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" class="empty">Belum ada peserta terdaftar.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = dataPesertaCache.map(p => {
+      const selesai = p.sudah_mengerjakan === true || p.sudah_mengerjakan === 'TRUE';
+      return `<tr>
+        <td class="nisn">${p.nisn}</td>
+        <td>${p.nama}</td>
+        <td>${p.jenis_kelamin}</td>
+        <td><span class="pill-status ${selesai ? 'selesai' : 'belum'}">${selesai ? 'Selesai' : 'Belum'}</span></td>
+        <td><button class="btn-hapus" onclick="konfirmasiHapus('${p.nisn}')" title="Hapus peserta">✕</button></td>
+      </tr>`;
+    }).join('');
+  }
+
+  async function konfirmasiHapus(nisn) {
+    if (!confirm('Hapus peserta dengan NISN ' + nisn + '?')) return;
+    await callGAS('hapusPeserta', { kode: dataProktorAktif.kode_proktor, nisn });
+    muatDaftarPeserta();
+  }
+
+  // ================= BANK SOAL =================
+
+  let hasilParsingSoal = { ln: [], gaya: [] };
+
+  function gantiJenisSoal(jenis) {
+    document.querySelectorAll('[data-jsoal]').forEach(b => b.classList.toggle('active', b.dataset.jsoal === jenis));
+    document.getElementById('panelLN').style.display = jenis === 'ln' ? 'block' : 'none';
+    document.getElementById('panelGaya').style.display = jenis === 'gaya' ? 'block' : 'none';
+  }
+
+  function gantiSubTab(grup, sub) {
+    document.querySelectorAll(`#panel${grup} [data-sub]`).forEach(b => b.classList.toggle('active', b.dataset.sub === sub));
+    document.getElementById(`${grup}-manual`).style.display = sub === 'manual' ? 'block' : 'none';
+    document.getElementById(`${grup}-upload`).style.display = sub === 'upload' ? 'block' : 'none';
+  }
+
+  async function submitStarterSet() {
+    const btn = document.getElementById('btnStarter');
+    const msgEl = document.getElementById('starterMsg');
+    btn.disabled = true; btn.textContent = 'Memuat starter set...';
+    try {
+      const res = await callGAS('isiStarterSet', { kode: dataProktorAktif.kode_proktor });
+      msgEl.className = res.success ? 'msg success' : 'msg error';
+      msgEl.textContent = res.message;
+      if (res.success) muatBankSoal();
+    } catch (err) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = 'Gagal terhubung ke server.';
+    }
+    btn.disabled = false; btn.textContent = '✨ Isi dengan Starter Set AKM';
+  }
+
+  // ---- Manual: Literasi & Numerasi ----
+  async function submitTambahSoal() {
+    const payload = {
+      kode: dataProktorAktif.kode_proktor,
+      kategori: document.getElementById('sKategori').value,
+      pertanyaan: document.getElementById('sPertanyaan').value.trim(),
+      petikan: document.getElementById('sPetikan').value.trim(),
+      pilihanA: document.getElementById('sA').value.trim(),
+      pilihanB: document.getElementById('sB').value.trim(),
+      pilihanC: document.getElementById('sC').value.trim(),
+      pilihanD: document.getElementById('sD').value.trim(),
+      kunciJawaban: document.getElementById('sKunci').value,
+      levelKesulitan: document.getElementById('sLevel').value
+    };
+    const msgEl = document.getElementById('soalMsg');
+    const btn = document.getElementById('btnTambahSoal');
+
+    if (!payload.pertanyaan || !payload.pilihanA || !payload.pilihanB || !payload.pilihanC || !payload.pilihanD) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = 'Pertanyaan dan keempat pilihan wajib diisi.';
+      return;
+    }
+
+    btn.disabled = true; btn.textContent = 'Menyimpan...';
+    try {
+      const res = await callGAS('tambahSoal', payload);
+      msgEl.className = res.success ? 'msg success' : 'msg error';
+      msgEl.textContent = res.message;
+      if (res.success) {
+        ['sPertanyaan','sPetikan','sA','sB','sC','sD'].forEach(id => document.getElementById(id).value = '');
+        muatBankSoal();
+      }
+    } catch (err) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = 'Gagal terhubung ke server.';
+    }
+    btn.disabled = false; btn.textContent = 'Tambah Soal';
+  }
+
+  // ---- Manual: Gaya Belajar ----
+  async function submitTambahGaya() {
+    const pernyataan = document.getElementById('gPernyataan').value.trim();
+    const tipeGaya = document.getElementById('gTipe').value;
+    const msgEl = document.getElementById('gayaMsg');
+    const btn = document.getElementById('btnTambahGaya');
+
+    if (!pernyataan) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = 'Pernyataan wajib diisi.';
+      return;
+    }
+
+    btn.disabled = true; btn.textContent = 'Menyimpan...';
+    try {
+      const res = await callGAS('tambahSoalGayaBelajar', { kode: dataProktorAktif.kode_proktor, pernyataan, tipeGaya });
+      msgEl.className = res.success ? 'msg success' : 'msg error';
+      msgEl.textContent = res.message;
+      if (res.success) {
+        document.getElementById('gPernyataan').value = '';
+        muatBankSoal();
+      }
+    } catch (err) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = 'Gagal terhubung ke server.';
+    }
+    btn.disabled = false; btn.textContent = 'Tambah Pernyataan';
+  }
+
+  // ---- Template unduh (.xlsx) ----
+  function unduhTemplateLN() {
+    const header = ['kategori', 'pertanyaan', 'petikan (opsional)', 'pilihan_a', 'pilihan_b', 'pilihan_c', 'pilihan_d', 'kunci_jawaban (A/B/C/D)', 'level_kesulitan (Mudah/Sedang/Sulit)'];
+    const contoh = ['Literasi', 'Contoh: gagasan utama teks berikut adalah...', 'Contoh kutipan teks bacaan di sini', 'Pilihan A', 'Pilihan B', 'Pilihan C', 'Pilihan D', 'B', 'Sedang'];
+    const ws = XLSX.utils.aoa_to_sheet([header, contoh]);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Template Soal');
+    XLSX.writeFile(wb, 'Template_Soal_Literasi_Numerasi_ALINEA.xlsx');
+  }
+
+  function unduhTemplateGaya() {
+    const header = ['pernyataan', 'tipe_gaya (Visual/Auditori/Kinestetik)'];
+    const contoh = ['Contoh: Saya lebih mudah paham lewat gambar dan diagram.', 'Visual'];
+    const ws = XLSX.utils.aoa_to_sheet([header, contoh]);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Template Gaya Belajar');
+    XLSX.writeFile(wb, 'Template_GayaBelajar_ALINEA.xlsx');
+  }
+
+  // ---- Upload & parse file soal ----
+  function prosesFileSoal(event, jenis) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const sheetPertama = workbook.Sheets[workbook.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(sheetPertama, { header: 1 });
+      const selCell = String(rows[0] && rows[0][0] || '').trim().toLowerCase();
+      const mulaiDari = (selCell === 'kategori' || selCell === 'pernyataan') ? 1 : 0;
+      const dataRows = rows.slice(mulaiDari).filter(r => r && r[0]);
+
+      if (jenis === 'ln') {
+        hasilParsingSoal.ln = dataRows.map(r => ({
+          kategori: String(r[0] || '').trim(),
+          pertanyaan: String(r[1] || '').trim(),
+          petikan: String(r[2] || '').trim(),
+          pilihanA: String(r[3] || '').trim(),
+          pilihanB: String(r[4] || '').trim(),
+          pilihanC: String(r[5] || '').trim(),
+          pilihanD: String(r[6] || '').trim(),
+          kunciJawaban: String(r[7] || '').trim().toUpperCase(),
+          levelKesulitan: String(r[8] || 'Sedang').trim()
+        }));
+        tampilkanPreviewSoal('ln');
+      } else {
+        hasilParsingSoal.gaya = dataRows.map(r => ({
+          pernyataan: String(r[0] || '').trim(),
+          tipeGaya: String(r[1] || '').trim()
+        }));
+        tampilkanPreviewSoal('gaya');
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  function tampilkanPreviewSoal(jenis) {
+    if (jenis === 'ln') {
+      const rows = hasilParsingSoal.ln;
+      const valid = rows.filter(r => r.kategori && r.pertanyaan && r.pilihanA && r.pilihanB && r.pilihanC && r.pilihanD && r.kunciJawaban);
+      document.getElementById('previewLNSummary').textContent = `${valid.length} soal siap diimport` + (rows.length - valid.length > 0 ? `, ${rows.length - valid.length} baris dilewati (data tidak lengkap).` : '.');
+      const table = document.getElementById('previewLNTable');
+      table.innerHTML = '<thead><tr><th>Kategori</th><th>Pertanyaan</th><th>Kunci</th></tr></thead><tbody>' +
+        rows.map(r => {
+          const invalid = !(r.kategori && r.pertanyaan && r.pilihanA && r.pilihanB && r.pilihanC && r.pilihanD && r.kunciJawaban);
+          return `<tr class="${invalid ? 'row-invalid' : ''}"><td>${r.kategori || '-'}</td><td>${(r.pertanyaan || '-').slice(0,60)}</td><td>${r.kunciJawaban || '-'}</td></tr>`;
+        }).join('') + '</tbody>';
+      document.getElementById('previewLN').style.display = 'block';
+    } else {
+      const rows = hasilParsingSoal.gaya;
+      const valid = rows.filter(r => r.pernyataan && r.tipeGaya);
+      document.getElementById('previewGayaSummary').textContent = `${valid.length} pernyataan siap diimport` + (rows.length - valid.length > 0 ? `, ${rows.length - valid.length} baris dilewati.` : '.');
+      const table = document.getElementById('previewGayaTable');
+      table.innerHTML = '<thead><tr><th>Pernyataan</th><th>Tipe</th></tr></thead><tbody>' +
+        rows.map(r => {
+          const invalid = !(r.pernyataan && r.tipeGaya);
+          return `<tr class="${invalid ? 'row-invalid' : ''}"><td>${(r.pernyataan || '-').slice(0,70)}</td><td>${r.tipeGaya || '-'}</td></tr>`;
+        }).join('') + '</tbody>';
+      document.getElementById('previewGaya').style.display = 'block';
+    }
+  }
+
+  async function submitImportSoal(jenis) {
+    const jenisSoal = jenis === 'ln' ? 'literasi_numerasi' : 'gaya_belajar';
+    const daftar = jenis === 'ln'
+      ? hasilParsingSoal.ln.filter(r => r.kategori && r.pertanyaan && r.pilihanA && r.pilihanB && r.pilihanC && r.pilihanD && r.kunciJawaban)
+      : hasilParsingSoal.gaya.filter(r => r.pernyataan && r.tipeGaya);
+
+    const msgEl = document.getElementById(jenis === 'ln' ? 'importLNMsg' : 'importGayaMsg');
+
+    if (daftar.length === 0) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = 'Tidak ada baris valid untuk diimport.';
+      return;
+    }
+
+    try {
+      const res = await fetch(WEB_APP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'importSoalBulk', kode: dataProktorAktif.kode_proktor, jenisSoal, daftar })
+      });
+      const data = await res.json();
+      msgEl.className = data.success ? 'msg success' : 'msg error';
+      msgEl.textContent = data.message;
+      if (data.success) {
+        document.getElementById(jenis === 'ln' ? 'previewLN' : 'previewGaya').style.display = 'none';
+        document.getElementById(jenis === 'ln' ? 'fileSoalLN' : 'fileSoalGaya').value = '';
+        muatBankSoal();
+      }
+    } catch (err) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = 'Gagal terhubung ke server.';
+    }
+  }
+
+  // ---- Muat & render bank soal ----
+  async function muatBankSoal() {
+    try {
+      const res = await callGAS('getBankSoal', { kode: dataProktorAktif.kode_proktor });
+      if (res.success) {
+        renderTabelLN(res.literasiNumerasi);
+        renderTabelGaya(res.gayaBelajar);
+      }
+    } catch (err) { /* diamkan, tabel tetap tampil "Belum ada" */ }
+  }
+
+  function renderTabelLN(data) {
+    const tbody = document.getElementById('bodyLN');
+    if (!data || data.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="empty">Belum ada soal.</td></tr>'; return; }
+    tbody.innerHTML = data.map(s => `<tr>
+      <td class="nisn">${s.id_soal}</td>
+      <td>${s.kategori}</td>
+      <td>${String(s.pertanyaan).slice(0,50)}${String(s.pertanyaan).length > 50 ? '…' : ''}</td>
+      <td>${s.kunci_jawaban}</td>
+      <td>${s.level_kesulitan}</td>
+      <td><button class="btn-hapus" onclick="konfirmasiHapusSoal('${s.id_soal}','ln')">✕</button></td>
+    </tr>`).join('');
+  }
+
+  function renderTabelGaya(data) {
+    const tbody = document.getElementById('bodyGaya');
+    if (!data || data.length === 0) { tbody.innerHTML = '<tr><td colspan="4" class="empty">Belum ada pernyataan.</td></tr>'; return; }
+    tbody.innerHTML = data.map(s => `<tr>
+      <td class="nisn">${s.id_soal}</td>
+      <td>${String(s.pernyataan).slice(0,60)}${String(s.pernyataan).length > 60 ? '…' : ''}</td>
+      <td>${s.tipe_gaya}</td>
+      <td><button class="btn-hapus" onclick="konfirmasiHapusSoal('${s.id_soal}','gaya_belajar')">✕</button></td>
+    </tr>`).join('');
+  }
+
+  async function konfirmasiHapusSoal(idSoal, jenisSoal) {
+    if (!confirm('Hapus soal ' + idSoal + '?')) return;
+    await callGAS('hapusSoal', { kode: dataProktorAktif.kode_proktor, idSoal, jenisSoal });
+    muatBankSoal();
+  }
+
+  // ================= HASIL & PEMBAGIAN KELAS =================
+
+  let dataHasilCache = [];
+  let dataKelasCache = [];
+
+  async function muatHasilDanKelas() {
+    try {
+      const resHasil = await callGAS('getHasilLengkap', { kode: dataProktorAktif.kode_proktor });
+      if (resHasil.success) { dataHasilCache = resHasil.data; renderTabelHasil(); }
+
+      const resKelas = await callGAS('getPembagianKelas', { kode: dataProktorAktif.kode_proktor });
+      if (resKelas.success) { dataKelasCache = resKelas.data; renderTabelKelas(); }
+    } catch (err) { /* diamkan */ }
+  }
+
+  function renderTabelHasil() {
+    const tbody = document.getElementById('bodyHasil');
+    if (dataHasilCache.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="empty">Belum ada hasil tes.</td></tr>'; return; }
+    tbody.innerHTML = dataHasilCache.map(h => `<tr>
+      <td class="nisn">${h.nisn}</td><td>${h.nama}</td><td>${h.jenis_kelamin}</td>
+      <td class="score-l">${h.skor_literasi} <span style="color:var(--ink-faint); font-size:11px;">(${h.kategori_literasi})</span></td>
+      <td class="score-n">${h.skor_numerasi} <span style="color:var(--ink-faint); font-size:11px;">(${h.kategori_numerasi})</span></td>
+      <td><span class="gaya-pill">${h.gaya_dominan}</span></td>
+    </tr>`).join('');
+  }
+
+  function renderTabelKelas() {
+    const tbody = document.getElementById('bodyKelas');
+    if (dataKelasCache.length === 0) { tbody.innerHTML = '<tr><td colspan="5" class="empty">Belum dibagi. Klik "Bagi Kelas Sekarang".</td></tr>'; return; }
+    tbody.innerHTML = dataKelasCache.map(k => {
+      const kelasHuruf = String(k.kelas_hasil).replace('Kelas ', '').toLowerCase();
+      return `<tr>
+        <td class="nisn">${k.nisn}</td><td>${k.nama}</td><td>${k.jenis_kelamin}</td>
+        <td>${k.skor_total}</td>
+        <td><span class="kelas-badge ${kelasHuruf}">${k.kelas_hasil}</span></td>
+      </tr>`;
+    }).join('');
+  }
+
+  async function submitBagiKelas() {
+    const msgEl = document.getElementById('kelasMsg');
+    msgEl.className = 'msg';
+    try {
+      const res = await callGAS('bagiKelas', { kode: dataProktorAktif.kode_proktor });
+      msgEl.className = res.success ? 'msg success' : 'msg error';
+      msgEl.textContent = res.message;
+      if (res.success) muatHasilDanKelas();
+    } catch (err) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = 'Gagal terhubung ke server.';
+    }
+  }
+
+  function unduhPembagianKelas() {
+    if (dataKelasCache.length === 0) {
+      alert('Belum ada data pembagian kelas. Klik "Bagi Kelas Sekarang" dulu.');
+      return;
+    }
+    const header = ['NISN', 'Nama', 'Jenjang', 'Jenis Kelamin', 'Skor Total', 'Ranking dalam Gender', 'Kelas'];
+    const rows = dataKelasCache.map(k => [k.nisn, k.nama, k.jenjang, k.jenis_kelamin, k.skor_total, k.rank_dalam_gender, k.kelas_hasil]);
+    const ws = XLSX.utils.aoa_to_sheet([header, ...rows]);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Pembagian Kelas');
+    XLSX.writeFile(wb, 'Pembagian_Kelas_ALINEA.xlsx');
+  }
+
+  async function submitHubungkanSheet() {
+    const linkSheet = document.getElementById('inpLinkSheet').value.trim();
+    const msgEl = document.getElementById('hubungMsg');
+    const btn = document.getElementById('btnHubung');
+
+    if (!linkSheet || !linkSheet.includes('docs.google.com/spreadsheets')) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = 'Tempel link Google Sheet yang valid.';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Menghubungkan...';
+    msgEl.className = 'msg';
+
+    try {
+      const res = await callGAS('daftarkanSheet', { kode: dataProktorAktif.kode_proktor, linkSheet });
+      if (res.success) {
+        dataProktorAktif.status = 'Aktif';
+        dataProktorAktif.link_sheet_proktor = linkSheet;
+        tampilkanDashboard();
+      } else {
+        msgEl.className = 'msg error';
+        msgEl.textContent = res.message;
+      }
+    } catch (err) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = 'Gagal terhubung ke server.';
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Hubungkan Sheet';
+  }
+
+  function logout() {
+    sessionStorage.removeItem('alinea_kode_proktor');
+    dataProktorAktif = null;
+    document.getElementById('appScreen').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('inpKode').value = '';
+  }
+</script>
+</body>
+</html>

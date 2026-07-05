@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ALINEA — Admin Pusat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1A1A1A; --ink-soft:#4E4E4E; --ink-faint:#8A8A8A;
+    --paper:#FAFBFC; --paper-raised:#FFFFFF; --line:#E7EAEC;
+    --blue:#1D6FA8; --blue-deep:#124A73; --blue-tint:#E6F1FB;
+    --gold:#FBD206; --gold-deep:#9C6F0A; --gold-tint:#FFF6D2;
+    --danger:#AD3A2E; --danger-tint:#F5E1DE;
+    --success:#2E7D4F; --success-tint:#E1F0E6;
+    --shadow: 0 1px 2px rgba(26,26,26,0.04), 0 12px 28px -18px rgba(26,26,26,0.20);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--paper); color:var(--ink); font-family:'IBM Plex Sans',sans-serif; -webkit-font-smoothing:antialiased;}
+  .shell{display:grid; grid-template-columns:250px 1fr; min-height:100vh;}
+
+  .sidebar{background:var(--ink); color:#D8D8D8; padding:26px 20px; display:flex; flex-direction:column;}
+  .brand{display:flex; align-items:center; gap:10px; margin-bottom:34px; padding:0 4px;}
+  .mark{width:34px; height:34px; border-radius:11px 11px 11px 3px; background:var(--gold); color:var(--ink); display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-style:italic; font-weight:600; font-size:19px; flex-shrink:0;}
+  .brand-name{font-family:'Fraunces',serif; font-weight:700; font-size:17px; color:#fff;}
+  .brand-sub{font-size:10px; color:#8A8A8A; font-family:'IBM Plex Mono',monospace; text-transform:uppercase; letter-spacing:0.4px;}
+  nav{display:flex; flex-direction:column; gap:3px; margin-top:6px;}
+  .nav-label{font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color:#6B6B6B; font-family:'IBM Plex Mono',monospace; margin:16px 10px 8px;}
+  nav a{display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px 10px 10px 3px; color:#C4C4C4; text-decoration:none; font-size:14px; font-weight:500;}
+  nav a.active{background:var(--gold); color:var(--ink); font-weight:700;}
+  nav a:hover:not(.active){background:rgba(255,255,255,0.06);}
+  .sidebar-foot{margin-top:auto; padding-top:20px; border-top:1px solid rgba(255,255,255,0.1); display:flex; align-items:center; gap:10px;}
+  .avatar{width:34px; height:34px; border-radius:50%; background:var(--blue); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; flex-shrink:0;}
+  .who{font-size:13px; color:#fff; font-weight:600; line-height:1.3;}
+  .who span{display:block; font-weight:400; font-size:11px; color:#8A8A8A;}
+
+  main{padding:32px 40px 60px;}
+  .topbar{display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:28px;}
+  .topbar h1{font-family:'Fraunces',serif; font-size:28px; font-weight:700; margin:0 0 4px;}
+  .topbar p{margin:0; color:var(--ink-soft); font-size:14px;}
+  .btn{border:none; cursor:pointer; font-family:inherit; font-weight:700; font-size:14px; padding:12px 20px; border-radius:100px 100px 100px 4px; display:inline-flex; align-items:center; gap:8px;}
+  .btn-primary{background:var(--blue); color:#fff;}
+  .btn-primary:hover{background:var(--blue-deep);}
+  .btn-primary:disabled{opacity:0.6; cursor:wait;}
+
+  .stats{display:grid; grid-template-columns:1.2fr 1fr 1fr; gap:16px; margin-bottom:32px;}
+  .stat-card{border-radius:22px; padding:22px; box-shadow:var(--shadow); position:relative; overflow:hidden;}
+  .stat-card.blue{background:var(--blue); color:#fff; border-radius:24px 24px 24px 4px;}
+  .stat-card.gold{background:var(--gold); color:var(--ink); border-radius:24px 4px 24px 24px;}
+  .stat-card.line{background:var(--paper-raised); border:1.5px solid var(--line); color:var(--ink); border-radius:4px 24px 24px 24px;}
+  .stat-label{font-size:12px; font-family:'IBM Plex Mono',monospace; text-transform:uppercase; letter-spacing:0.3px; margin-bottom:10px; opacity:0.85;}
+  .stat-value{font-family:'Fraunces',serif; font-size:34px; font-weight:700;}
+  .stat-delta{font-size:12px; margin-top:6px; opacity:0.8;}
+  .stat-dot{position:absolute; width:70px; height:70px; border-radius:50%; background:rgba(255,255,255,0.15); bottom:-24px; right:-24px;}
+  .stat-card.line .stat-dot{background:var(--blue-tint);}
+
+  .card{background:var(--paper-raised); border:1px solid var(--line); border-radius:22px; box-shadow:var(--shadow); overflow:hidden;}
+  .card-head{padding:20px 24px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center;}
+  .card-head h2{font-family:'Fraunces',serif; font-size:18px; margin:0; font-weight:700;}
+  .search{font-size:13px; padding:9px 16px; border-radius:100px; border:1.5px solid var(--line); color:var(--ink); background:var(--paper); font-family:inherit; width:200px;}
+  table{width:100%; border-collapse:collapse;}
+  th{text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.4px; color:var(--ink-faint); font-family:'IBM Plex Mono',monospace; padding:12px 24px; border-bottom:1px solid var(--line); font-weight:500;}
+  td{padding:16px 24px; border-bottom:1px solid var(--line); font-size:14px; vertical-align:middle;}
+  tr:last-child td{border-bottom:none;}
+  .kode{font-family:'IBM Plex Mono',monospace; background:var(--blue-tint); color:var(--blue-deep); padding:4px 10px; border-radius:8px 8px 8px 2px; font-size:12.5px; letter-spacing:0.3px; font-weight:600;}
+  .sekolah{font-weight:700;}
+  .sekolah span{display:block; font-weight:400; font-size:12px; color:var(--ink-faint); margin-top:2px;}
+  .badge{display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700; padding:5px 11px; border-radius:100px 100px 100px 3px;}
+  .badge.aktif{background:var(--success-tint); color:var(--success);}
+  .badge.nonaktif, .badge.belum{background:var(--danger-tint); color:var(--danger);}
+  .badge .dot{width:6px; height:6px; border-radius:50%; background:currentColor;}
+  .jenjang-pill{font-size:11.5px; font-family:'IBM Plex Mono',monospace; padding:3px 9px; border-radius:8px; background:var(--gold-tint); color:var(--gold-deep); font-weight:600;}
+  .link{color:var(--blue); font-size:13px; font-weight:700; text-decoration:none; cursor:pointer; background:none; border:none; font-family:inherit; padding:0;}
+  .link.danger{color:var(--danger);}
+  .actions{display:flex; gap:14px;}
+  .empty-row td{text-align:center; color:var(--ink-faint); padding:40px 24px; font-size:13.5px;}
+
+  .overlay{position:fixed; inset:0; background:rgba(26,26,26,0.5); display:none; align-items:center; justify-content:center; z-index:10;}
+  .overlay.show{display:flex;}
+  .modal{background:var(--paper-raised); border-radius:26px 26px 26px 6px; padding:30px; width:420px; box-shadow:0 30px 60px -20px rgba(0,0,0,0.35);}
+  .modal h3{font-family:'Fraunces',serif; margin:0 0 6px; font-size:20px; font-weight:700;}
+  .modal p.sub{margin:0 0 22px; font-size:13px; color:var(--ink-faint);}
+  .field{margin-bottom:14px;}
+  .field label{display:block; font-size:12.5px; font-weight:700; margin-bottom:6px; color:var(--ink-soft);}
+  .field input, .field select{width:100%; padding:10px 12px; border-radius:10px; border:1.5px solid var(--line); font-family:inherit; font-size:14px; background:var(--paper);}
+  .modal-actions{display:flex; justify-content:flex-end; gap:10px; margin-top:20px;}
+  .btn-ghost{background:transparent; border:1.5px solid var(--line); color:var(--ink-soft); padding:10px 16px; border-radius:100px; font-weight:700; font-size:13px; cursor:pointer; font-family:inherit;}
+  .field-msg{font-size:12.5px; margin-top:10px; padding:10px 12px; border-radius:10px; display:none;}
+  .field-msg.error{background:var(--danger-tint); color:var(--danger); display:block;}
+  .field-msg.success{background:var(--success-tint); color:var(--success); display:block;}
+  .kode-hasil{font-family:'IBM Plex Mono',monospace; font-size:20px; font-weight:700; color:var(--blue-deep); background:var(--blue-tint); padding:10px 16px; border-radius:10px; text-align:center; margin-top:14px; letter-spacing:1px;}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="mark">¶</div>
+      <div>
+        <div class="brand-name">ALINEA</div>
+        <div class="brand-sub">Admin Pusat</div>
+      </div>
+    </div>
+    <nav>
+      <div class="nav-label">Utama</div>
+      <a href="#" class="active">◧ Ringkasan</a>
+      <a href="#">🏫 Proktor &amp; Sekolah</a>
+      <div class="nav-label">Sistem</div>
+      <a href="#">▤ Bank Soal Master</a>
+      <a href="#">⚙ Pengaturan</a>
+    </nav>
+    <div class="sidebar-foot">
+      <div class="avatar">DA</div>
+      <div class="who">Dirgam Adu Lama<span>Super Admin</span></div>
+    </div>
+  </aside>
+
+  <main>
+    <div class="topbar">
+      <div>
+        <h1>Ringkasan Sistem</h1>
+        <p id="tanggalHariIni"></p>
+      </div>
+      <button class="btn btn-primary" onclick="bukaModalKode()">+ Buat Kode Proktor</button>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card blue">
+        <div class="stat-label">Sekolah Terdaftar</div>
+        <div class="stat-value" id="statSekolah">—</div>
+        <div class="stat-delta">Semua kode aktif maupun belum setup</div>
+        <div class="stat-dot"></div>
+      </div>
+      <div class="stat-card gold">
+        <div class="stat-label">Sheet Terhubung</div>
+        <div class="stat-value" id="statTerhubung">—</div>
+        <div class="stat-delta">Sudah selesai proses setup</div>
+        <div class="stat-dot"></div>
+      </div>
+      <div class="stat-card line">
+        <div class="stat-label">Belum Setup</div>
+        <div class="stat-value" id="statBelum">—</div>
+        <div class="stat-delta" style="color:var(--blue-deep);">Menunggu proktor daftarkan Sheet</div>
+        <div class="stat-dot"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <h2>Daftar Proktor</h2>
+        <input class="search" id="searchInput" placeholder="Cari sekolah..." oninput="renderTabel()">
+      </div>
+      <table>
+        <thead>
+          <tr><th>Kode</th><th>Sekolah</th><th>Jenjang</th><th>Status</th><th>Aksi</th></tr>
+        </thead>
+        <tbody id="tabelProktor">
+          <tr class="empty-row"><td colspan="5">Memuat data...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<div class="overlay" id="modalKode">
+  <div class="modal">
+    <h3>Buat Kode Proktor Baru</h3>
+    <p class="sub">Kode ini diberikan ke sekolah untuk mulai setup Sheet mereka sendiri.</p>
+    <div class="field"><label>Nama Sekolah</label><input id="inpNamaSekolah" placeholder="cth. SMP Negeri 2 Obi"></div>
+    <div class="field"><label>Jenjang</label>
+      <select id="inpJenjang"><option value="SMP">SMP</option><option value="SMA">SMA</option></select>
+    </div>
+    <div class="field"><label>Nama Proktor</label><input id="inpNamaProktor" placeholder="cth. Siti Aminah, S.Pd."></div>
+    <div class="field"><label>Email Proktor</label><input id="inpEmail" placeholder="proktor@sekolah.sch.id"></div>
+    <div id="modalMsg" class="field-msg"></div>
+    <div id="hasilKode"></div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="tutupModalKode()">Tutup</button>
+      <button class="btn btn-primary" id="btnGenerate" onclick="submitGenerateKode()">Generate Kode</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ==========================================================
+  // GANTI URL INI dengan URL Web App hasil Deploy dari Code.gs
+  // ==========================================================
+  const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzavUXVeEDNf_65an-rb37OEzV03nF_MtzrzBe1sVBFL3lpFR6UxbhpHFoU7d9cT_TSuw/exec';
+
+  let daftarProktorCache = [];
+
+  document.getElementById('tanggalHariIni').textContent =
+    'Pantauan seluruh sekolah yang menggunakan ALINEA · ' +
+    new Date().toLocaleDateString('id-ID', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+
+  // ---- Helper JSONP: panggil Code.gs tanpa masalah CORS ----
+  function callGAS(action, params) {
+    return new Promise((resolve, reject) => {
+      const callbackName = 'cb_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
+      window[callbackName] = (data) => {
+        resolve(data);
+        delete window[callbackName];
+        script.remove();
+      };
+      const query = new URLSearchParams({ action, callback: callbackName, ...params });
+      const script = document.createElement('script');
+      script.src = WEB_APP_URL + '?' + query.toString();
+      script.onerror = () => { reject(new Error('Gagal terhubung ke server.')); script.remove(); };
+      document.body.appendChild(script);
+    });
+  }
+
+  // ---- Muat daftar proktor dari Sheet Index Pusat ----
+  async function muatDaftarProktor() {
+    try {
+      const res = await callGAS('getDaftarProktor', {});
+      if (res.success) {
+        daftarProktorCache = res.data;
+        renderStats();
+        renderTabel();
+      } else {
+        tampilkanErrorTabel(res.message);
+      }
+    } catch (err) {
+      tampilkanErrorTabel('Tidak bisa terhubung ke server. Cek URL Web App di kode.');
+    }
+  }
+
+  function renderStats() {
+    document.getElementById('statSekolah').textContent = daftarProktorCache.length;
+    document.getElementById('statTerhubung').textContent = daftarProktorCache.filter(p => p.status === 'Aktif').length;
+    document.getElementById('statBelum').textContent = daftarProktorCache.filter(p => p.status === 'Belum Setup').length;
+  }
+
+  function renderTabel() {
+    const keyword = document.getElementById('searchInput').value.toLowerCase();
+    const tbody = document.getElementById('tabelProktor');
+    const filtered = daftarProktorCache.filter(p =>
+      p.nama_sekolah.toLowerCase().includes(keyword) || p.kode_proktor.toLowerCase().includes(keyword)
+    );
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Belum ada proktor terdaftar.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = filtered.map(p => {
+      const statusClass = p.status === 'Aktif' ? 'aktif' : 'belum';
+      const tombolAksi = p.status === 'Nonaktif'
+        ? `<button class="link" onclick="ubahStatus('${p.kode_proktor}','Aktif')">Aktifkan</button>`
+        : `<button class="link danger" onclick="ubahStatus('${p.kode_proktor}','Nonaktif')">Nonaktifkan</button>`;
+      return `<tr>
+        <td><span class="kode">${p.kode_proktor}</span></td>
+        <td class="sekolah">${p.nama_sekolah}<span>${p.nama_proktor}</span></td>
+        <td><span class="jenjang-pill">${p.jenjang}</span></td>
+        <td><span class="badge ${statusClass}"><span class="dot"></span>${p.status}</span></td>
+        <td class="actions">${tombolAksi}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  function tampilkanErrorTabel(pesan) {
+    document.getElementById('tabelProktor').innerHTML =
+      `<tr class="empty-row"><td colspan="5">${pesan}</td></tr>`;
+  }
+
+  async function ubahStatus(kode, statusBaru) {
+    await callGAS('toggleStatusProktor', { kode, status: statusBaru });
+    muatDaftarProktor();
+  }
+
+  // ---- Modal generate kode ----
+  function bukaModalKode() {
+    document.getElementById('modalKode').classList.add('show');
+    document.getElementById('modalMsg').className = 'field-msg';
+    document.getElementById('hasilKode').innerHTML = '';
+  }
+  function tutupModalKode() {
+    document.getElementById('modalKode').classList.remove('show');
+    ['inpNamaSekolah','inpNamaProktor','inpEmail'].forEach(id => document.getElementById(id).value = '');
+    muatDaftarProktor();
+  }
+
+  async function submitGenerateKode() {
+    const namaSekolah = document.getElementById('inpNamaSekolah').value.trim();
+    const jenjang = document.getElementById('inpJenjang').value;
+    const namaProktor = document.getElementById('inpNamaProktor').value.trim();
+    const email = document.getElementById('inpEmail').value.trim();
+    const msgEl = document.getElementById('modalMsg');
+    const btn = document.getElementById('btnGenerate');
+
+    if (!namaSekolah || !namaProktor) {
+      msgEl.className = 'field-msg error';
+      msgEl.textContent = 'Nama sekolah dan nama proktor wajib diisi.';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Memproses...';
+
+    try {
+      const res = await callGAS('generateKodeProktor', { namaSekolah, jenjang, namaProktor, email });
+      if (res.success) {
+        msgEl.className = 'field-msg success';
+        msgEl.textContent = 'Kode berhasil dibuat. Salin dan kirim ke proktor sekolah.';
+        document.getElementById('hasilKode').innerHTML = `<div class="kode-hasil">${res.kode}</div>`;
+      } else {
+        msgEl.className = 'field-msg error';
+        msgEl.textContent = res.message;
+      }
+    } catch (err) {
+      msgEl.className = 'field-msg error';
+      msgEl.textContent = 'Gagal terhubung ke server.';
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Generate Kode';
+  }
+
+  muatDaftarProktor();
+</script>
+</body>
+</html>
