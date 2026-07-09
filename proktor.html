@@ -306,7 +306,10 @@
         </div>
 
         <div class="card">
-          <h2>Daftar Peserta <span id="jumlahPeserta" style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--ink-faint); font-weight:400;"></span></h2>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h2>Daftar Peserta <span id="jumlahPeserta" style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--ink-faint); font-weight:400;"></span></h2>
+            <button class="btn btn-outline" onclick="konfirmasiResetSemua()">↺ Reset Semua Peserta</button>
+          </div>
           <div class="table-wrap"><table id="tabelPeserta">
             <thead><tr><th>NISN</th><th>Nama</th><th>JK</th><th>Status</th><th></th></tr></thead>
             <tbody id="bodyPeserta"><tr><td colspan="5" class="empty">Memuat data...</td></tr></tbody>
@@ -932,7 +935,10 @@
         <td>${p.nama}</td>
         <td>${p.jenis_kelamin}</td>
         <td><span class="pill-status ${selesai ? 'selesai' : 'belum'}">${selesai ? 'Selesai' : 'Belum'}</span></td>
-        <td><button class="btn-hapus" onclick="konfirmasiHapus('${p.nisn}')" title="Hapus peserta">✕</button></td>
+        <td>
+          <button class="btn-hapus" onclick="konfirmasiReset('${p.nisn}')" title="Reset peserta ini" style="color:var(--gold-deep);">↺</button>
+          <button class="btn-hapus" onclick="konfirmasiHapus('${p.nisn}')" title="Hapus peserta">✕</button>
+        </td>
       </tr>`;
     }).join('');
   }
@@ -941,6 +947,21 @@
     if (!confirm('Hapus peserta dengan NISN ' + nisn + '?')) return;
     await callGAS('hapusPeserta', { kode: dataProktorAktif.kode_proktor, nisn });
     muatDaftarPeserta();
+  }
+
+  async function konfirmasiReset(nisn) {
+    if (!confirm('Reset peserta NISN ' + nisn + '? Status tes dan hasil sebelumnya akan dihapus, siswa bisa tes ulang.')) return;
+    await callGAS('resetPeserta', { kode: dataProktorAktif.kode_proktor, nisn });
+    muatDaftarPeserta();
+    muatHasilDanKelas();
+  }
+
+  async function konfirmasiResetSemua() {
+    if (!confirm('Reset SEMUA peserta? Semua status tes, hasil, dan pembagian kelas akan dikosongkan. Tindakan ini tidak bisa dibatalkan.')) return;
+    if (!confirm('Yakin sekali? Ini akan menghapus seluruh data hasil tes yang sudah masuk.')) return;
+    await callGAS('resetSemuaPeserta', { kode: dataProktorAktif.kode_proktor });
+    muatDaftarPeserta();
+    muatHasilDanKelas();
   }
 
   // ================= BANK SOAL =================
